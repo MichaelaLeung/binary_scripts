@@ -54,7 +54,6 @@ def run_plots(values):
     for i in values:
         plot_mixingratios("/gscratch/vsm/mwjl/projects/binary/multiflare/io/spectra_info.dat",i)
     plot_o3("/gscratch/vsm/mwjl/projects/binary/multiflare/
-
         
 def run_smart_multi(values):
     for i in values:
@@ -72,6 +71,8 @@ def run_all_smart(pair,values):
     run_multiflare(pair)
     run_plots(values)
     run_smart_multi(values)
+
+    
 
 
 if __name__ == '__main__':

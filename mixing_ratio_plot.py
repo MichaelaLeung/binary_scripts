@@ -10,7 +10,8 @@ matplotlib.rcParams['text.usetex'] = False
 import random
 import math
 
-def plot_mixingratios(infile, i):
+def plot_mixingratios(infile, i, pair):
+>>>>>>> bd2033f5500a3cd08492ec58e3b81c432e8bd9ae
     #setting up constants
     block_length = 128
     skip_lines = 7
@@ -55,9 +56,11 @@ def plot_mixingratios(infile, i):
     axT.set_xlabel("Temperature [K]")
     axT.set_axisbelow(True)
     axT.plot(T2, P, color="black", label="Temperature", ls="--")
+    fig.savefig("/gscratch/vsm/mwjl/projects/binary/plots/" + str(i) + str(pair) + ".png", bbox_inches = "tight")
 
-    fig.savefig(infile + str(i) + ".png", bbox_inches = "tight")
-
+def run_plots(values, pair):
+    for i in values:
+        plot_mixingratios("/gscratch/vsm/mwjl/projects/binary/multiflare/io/spectra_info.dat",i, pair)
 
 if __name__ == '__main__':
 
@@ -79,7 +82,7 @@ if __name__ == '__main__':
                                rm_after_submit = True)
     elif platform.node().startswith("n"):
         # On a mox compute node: ready to run
-        plot_mixingratios('spectra_info.dat', 5)
+        run_plots([1000,2000,3000,4000,5000,6000,7000,8000,9000,10000], "GG")
     else:
         plot_mixingratios('GG_output_pt.txt', 5)
 

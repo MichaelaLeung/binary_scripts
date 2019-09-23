@@ -1,15 +1,15 @@
 import numpy as np
-import matplotlib
+import matplotlib;matplotlib.use('agg')
 import matplotlib.pyplot as plt
 from matplotlib.collections import LineCollection
 from astropy.io import fits
-import smart
 import sys, os
 import datetime
 matplotlib.rcParams['text.usetex'] = False
 import random
 import math 
 import csv
+import smart
 
 def csv_convert(pair):
     if pair == "GG":
@@ -35,9 +35,8 @@ def csv_convert(pair):
         i = i+1
     with open(infile) as f:
         first_line = f.readline()
-    with open(outfile, 'w', newline='') as f:
+    with open(outfile, 'w') as f:
         writer = csv.writer(f)
-        writer.writerow(str(first_line))
         writer.writerows(time_added)
 
 if __name__ == '__main__':
