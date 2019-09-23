@@ -13,45 +13,52 @@ import math
 import csv
 
 def plot_o3(infile, pair):
+    infile = "o3coldepth.dat"
     file = np.genfromtxt(infile, skip_header = 1)
     data = []
-    with open("/gscratch/vsm/mwjl/projects/binary/twostarsGG/twostars3_out_general.csv") as csvfile:
+    with open("twostars3_out_general.csv") as csvfile:
         readCSV = csv.reader(csvfile, delimiter=',')
         for row in readCSV:
             data.append(row[3:5])
     data = data[1:]
     star1 = []
     star2 = []
+
     for line in data: 
         temp = line[0]
         temp = temp.strip(" ")
-        i = 0
-        while i < 864:
-            star1.append(float(temp))
-            i = i+1 # original units are 1/100 of a day, 864 seconds -> should now be in seconds 
-        temp2 = line[1]
-        temp2 = temp2.strip(" ")
-        j = 0
-        while j < 864: 
-            star2.append(float(temp2))
-            j = j+1
+        star1.append(float(temp))
+        temp1 = line[1]
+        temp1 = temp1.strip(" ")
+        star2.append(float(temp1))
+    
+    t_star_final = []
+    t_star = range(len(star1))
+    for i in t_star: 
+        t_star_final.append(i*1/100)
     
     time = []
     o3 = []
     for line2 in file: 
-        time.append(float(line2[0]))  # original units are in seconds 
-        o3.append(line2[1])
-        
-    fig, ax = plt.subplots(figsize = (10,6))
-    plt.plot(time,o3)
-    plt.plot(range(len(star1)), star1)
-    plt.plot(range(len(star2)), star2)
-   # ax.set_yscale('log')
-    ax.set_ylabel('O3 column depth (cm$^{-2}$)')
-    ax.set_xlabel('Time (seconds)')
-    #fig.savefig(str(pair)+"o3plot.png", bbox_inches = 'tight')
+        time.append(float(line2[1])/84600)  # original units are in seconds 
+        o3.append(float(line2[3]))
 
-    fig.savefig("/gscratch/vsm/mwjl/projects/binary/plots/" + str(pair)+"o3plot.png", bbox_inches = 'tight')
+    fig, ax = plt.subplots(2,1, figsize = (20,12))
+
+    ax[0].set_xlim(0,400)
+    ax[1].set_xlim(0,400)
+
+    ax[0].plot(time,o3)
+
+    ax[1].plot(t_star_final, star1)
+    ax[1].plot(t_star_final, star2)
+
+    ax[0].set_ylabel('O3 column depth (cm$^{-2}$)')
+    ax[0].set_xlabel('Time (days)')
+
+    ax[1].set_xlabel('Time (days)')
+
+    fig.savefig("/gscratch/vsm/mwjl/projects/binary/" + str(pair)+"o3plot.png", bbox_inches = 'tight')
 
 if __name__ == '__main__':
 
