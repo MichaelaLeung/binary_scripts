@@ -15,7 +15,8 @@ from shutil import copyfile
 
 from mixing_ratio_plot import plot_mixingratios
 from csv_convert import csv_convert
-from o3_plot import plot_o3 
+from run_smart import run_smart
+from o3_plot import plot_o3
 
 def run_twostars(pair):
     if pair == "GG":
@@ -35,7 +36,7 @@ def run_csv_conversion(pair):
     csv_convert(pair)
 
 def run_multiflare(pair):
-    os.chdir("/gscratch/vsm/mwjl/projects/binary/multiflare/")
+    os.chdir("/gscratch/vsm/mwjl/projects/binary/twostarsGG/")
     if pair == "GG":
         subprocess.call(["./recover"], shell = True)
         copyfile("input_ggbin", "input")
@@ -43,22 +44,35 @@ def run_multiflare(pair):
     elif pair == "GK":
         subprocess.call(["./recover"], shell = True)
         copyfile("input_gkbin", "input")
-        subprocess.call(["./circumbinary"], shell = True)
+	subprocess.call(["./circumbinary"], shell = True)
     elif pair == "GM":
         subprocess.call(["./recover"], shell = True)
         copyfile("input_gmbin", "input")
         subprocess.call(["./circumbinary"], shell = True)      
         
-def run_plots(values, pair):
+def run_plots(values):
     for i in values:
-        plot_mixingratios("/gscratch/vsm/mwjl/projects/binary/multiflare/io/spectra_info.dat",i, pair)
-    plot_o3("/gscratch/vsm/mwjl/projects/binary/multiflare/io/o3coldepth.dat", pair)
+        plot_mixingratios("/gscratch/vsm/mwjl/projects/binary/multiflare/io/spectra_info.dat",i)
+    plot_o3("/gscratch/vsm/mwjl/projects/binary/multiflare/
+        
+def run_smart_multi(values):
+    for i in values:
+        run_smart("/gscratch/vsm/mwjl/projects/binary/multiflare/io/spectra_info.dat", i)
+
 def run_all(pair, values):
     run_twostars(pair)
     run_csv_conversion(pair)
     run_multiflare(pair)
-    run_plots(values, pair)
+    run_plots(values)
 
+def run_all_smart(pair,values):
+    run_twostars(pair)
+    run_csv_conversion(pair)
+    run_multiflare(pair)
+    run_plots(values)
+    run_smart_multi(values)
+
+    
 
 
 if __name__ == '__main__':
@@ -69,7 +83,7 @@ if __name__ == '__main__':
         # On the mox login node: submit job
         runfile = __file__
         smart.utils.write_slurm_script_python(runfile,
-                               name="binary",
+                               name="run_binary",
                                subname="submit.csh",
                                workdir = "",
                                nodes = 1,
