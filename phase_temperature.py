@@ -47,6 +47,7 @@ def phase_temp():
         temp = np.genfromtxt(infile, skip_header = (1 + (block_length + skip_lines)*(i-1)), max_rows = block_length)
         T = temp[-1:,1]
         t_final.append(float(T))
+        print(T)
         i = i+1
         
     matplotlib.rc('font',**{'family':'serif','serif':['Computer Modern']})
