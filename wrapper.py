@@ -51,6 +51,7 @@ def run_multiflare(pair):
         copyfile("input_gmbin", "input")
         subprocess.call(["./circumbinary"], shell = True)      
         
+
 def run_plots(values, pair):        
     run_plots(values,pair)
     plot_o3("/gscratch/vsm/mwjl/projects/binary/multiflare/io/o3coldepth.dat", pair)
