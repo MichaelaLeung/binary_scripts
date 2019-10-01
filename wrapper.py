@@ -17,6 +17,7 @@ from mixing_ratio_plot import plot_mixingratios
 from csv_convert import csv_convert
 from run_smart import run_smart
 from o3_plot import plot_o3
+from mixing_ratio_plot import run_plots
 
 def run_twostars(pair):
     if pair == "GG":
@@ -28,7 +29,7 @@ def run_twostars(pair):
         subprocess.call(["make"])
         subprocess.call(["./twostars3"])
     elif pair == "GM":
-        os.chdir("/gscratch/vsm/mwjl/projects/binary/twostarsGG/")
+        os.chdir("/gscratch/vsm/mwjl/projects/binary/twostarsGM/")
         subprocess.call(["make"])
         subprocess.call(["./twostars3"]) 
 
@@ -36,7 +37,7 @@ def run_csv_conversion(pair):
     csv_convert(pair)
 
 def run_multiflare(pair):
-    os.chdir("/gscratch/vsm/mwjl/projects/binary/twostarsGG/")
+    os.chdir("/gscratch/vsm/mwjl/projects/binary/multiflare")
     if pair == "GG":
         subprocess.call(["./recover"], shell = True)
         copyfile("input_ggbin", "input")
@@ -44,16 +45,15 @@ def run_multiflare(pair):
     elif pair == "GK":
         subprocess.call(["./recover"], shell = True)
         copyfile("input_gkbin", "input")
-	subprocess.call(["./circumbinary"], shell = True)
+        subprocess.call(["./circumbinary"], shell = True)
     elif pair == "GM":
         subprocess.call(["./recover"], shell = True)
         copyfile("input_gmbin", "input")
         subprocess.call(["./circumbinary"], shell = True)      
         
-def run_plots(values):
-    for i in values:
-        plot_mixingratios("/gscratch/vsm/mwjl/projects/binary/multiflare/io/spectra_info.dat",i)
-    plot_o3("/gscratch/vsm/mwjl/projects/binary/multiflare/
+def run_plots(values, pair):        
+    run_plots(values,pair)
+    plot_o3("/gscratch/vsm/mwjl/projects/binary/multiflare/io/o3coldepth.dat", pair)
 
         
 def run_smart_multi(values):
@@ -64,7 +64,7 @@ def run_all(pair, values):
     run_twostars(pair)
     run_csv_conversion(pair)
     run_multiflare(pair)
-    run_plots(values)
+    run_plots(values, pair)
 
 def run_all_smart(pair,values):
     run_twostars(pair)
@@ -94,6 +94,6 @@ if __name__ == '__main__':
                                rm_after_submit = True)
     elif platform.node().startswith("n"):
         # On a mox compute node: ready to run
-        run_all("GG", [1,1000,2000,3000,4000,5000,6000,7000,8000,9000,10000])
+        run_all("GK", [1,1000,2000,3000,4000,5000,6000,7000,8000,9000,10000])
     else:
         run_all("GG", 5)

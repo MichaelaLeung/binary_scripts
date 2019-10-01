@@ -11,7 +11,6 @@ import random
 import math
 
 def plot_mixingratios(infile, i, pair):
->>>>>>> bd2033f5500a3cd08492ec58e3b81c432e8bd9ae
     #setting up constants
     block_length = 128
     skip_lines = 7

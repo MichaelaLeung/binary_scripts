@@ -16,7 +16,7 @@ import platform
 
 def run_smart(infile, i):
     place = '/gscratch/vsm/mwjl/projects/binary/scripts/smart/'
-    sim = smart.interface.Smart(tag = "highd")
+    sim = smart.interface.Smart(tag = "from_binary")
     sim.set_run_in_place(place)
 
     #setting up constants
@@ -47,24 +47,27 @@ def run_smart(infile, i):
         
     label = "Ocean Loss"
     sim.smartin.alb_file = "/gscratch/vsm/mwjl/projects/high_res/inputs/desert_highd.alb"
-    sim.set_planet_proxima_b()
-    sim.set_star_proxima()
     
-    sim.smartin.out_dir = '/gscratch/vsm/mwjl/projects/binary/smart_output'
-    sim.lblin.out_dir = '/gscratch/vsm/mwjl/projects/binary/smart_output'
-    sim.smartin.abs_dir = '/gscratch/vsm/mwjl/projects/binary/smart_output'
+    sim.smartin.out_dir = '/gscratch/vsm/mwjl/projects/binary/scripts/smart_output'
+    sim.lblin.out_dir = '/gscratch/vsm/mwjl/projects/binary/scripts/smart_output'
+    sim.smartin.abs_dir = '/gscratch/vsm/mwjl/projects/binary/scripts/smart_output'
 
     sim.set_executables_automatically()
 
-    sim.lblin.par_file = '/gscratch/vsm/alinc/fixed_input/HITRAN2016' #/gscratch/vsm/alinc/fixed_input/
+    sim.lblin.par_file = '/gscratch/vsm/alinc/fixed_input/HITRAN2016.par' #/gscratch/vsm/alinc/fixed_input/
     sim.lblin.hitran_tag = 'hitran2016'
     sim.lblin.fundamntl_file = '/gscratch/vsm/alinc/fixed_input/fundamntl2016.dat'
     sim.lblin.lblabc_exe = '/gscratch/vsm/alinc/exec/lblabc_2016'
 
     sim.load_atmosphere_from_pt("temp.pt", addn2 = False, scaleP = 1.0)
 
+    lamin = 0.5
+    lamax = 2.5
+
+    res = 1/(10*lamin)
     sim.smartin.FWHM = res
     sim.smartin.sample_res = res
+
 
     sim.smartin.minwn = 1e4/lamax
     sim.smartin.maxwn = 1e4/lamin 
@@ -72,11 +75,13 @@ def run_smart(infile, i):
     sim.lblin.minwn = 1e4/lamax
     sim.lblin.maxwn = 1e4/lamin
 
+    sim.lblin.par_index = 7
+
     sim.gen_lblscripts()
     sim.run_lblabc()
     sim.write_smart(write_file = True)
     sim.run_smart()
-    
+       
     sim.open_outputs()
     wl = sim.output.rad.lam
     flux = sim.output.rad.pflux
@@ -113,7 +118,7 @@ if __name__ == '__main__':
                                rm_after_submit = True)
     elif platform.node().startswith("n"):
         # On a mox compute node: ready to run
-        run_smart("spectra_info.dat", 10)
+        run_smart("/gscratch/vsm/mwjl/projects/binary/multiflare/io/spectra_info.dat", 10)
     else:
         run_smart("spectra_info.dat", 10)
 
