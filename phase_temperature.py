@@ -59,3 +59,27 @@ def phase_temp()
     ax.set_ylabel("Temperature")
     fig.savefig("/gscratch/vsm/mwjl/projects/binary/plots/phase_temp.png", bbox_inches = "tight")
 
+
+if __name__ == '__main__':
+
+    import platform
+
+    if platform.node().startswith("mox"):
+        # On the mox login node: submit job
+        runfile = __file__
+        smart.utils.write_slurm_script_python(runfile,
+                               name="phase_T",
+                               subname="submit.csh",
+                               workdir = "",
+                               nodes = 1,
+                               mem = "500G",
+                               walltime = "10:00:00",
+                               ntasks = 28,
+                               account = "vsm",
+                               submit = True,
+                               rm_after_submit = True)
+    elif platform.node().startswith("n"):
+        # On a mox compute node: ready to run
+        phase_temp()
+    else:
+        phase_temp()
