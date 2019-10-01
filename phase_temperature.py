@@ -19,6 +19,7 @@ def phase_temp():
         readCSV = csv.reader(csvfile, delimiter=',')
         for row in readCSV:
             data.append(row[3:5])
+        print("csv")
     data = data[1:]
     star1 = []
     star2 = []
@@ -29,6 +30,7 @@ def phase_temp():
         temp2 = line[1]
         temp2 = temp2.strip(" ")
         star2.append(float(temp2))
+    print("arrays")
 
     t_star = [] # converting timescale to days
     t_star_temp = range(len(star1))
@@ -36,6 +38,7 @@ def phase_temp():
         temp3 = float(i)
         temp3 = temp3 *0.01 
         t_star.append(temp3)
+    print("time conversion")
 
     infile = "/gscratch/vsm/mwjl/projects/binary/multiflare/io/spectra_info.dat"
     t_final = []
