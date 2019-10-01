@@ -25,7 +25,7 @@ def run_twostars(pair):
         subprocess.call(["make"])
         subprocess.call(["./twostars3"])
     elif pair == "GK":
-        os.chdir("/gscratch/vsm/mwjl/projects/binary/twostarsGG/")
+        os.chdir("/gscratch/vsm/mwjl/projects/binary/twostarsGK/")
         subprocess.call(["make"])
         subprocess.call(["./twostars3"])
     elif pair == "GM":
@@ -95,6 +95,6 @@ if __name__ == '__main__':
                                rm_after_submit = True)
     elif platform.node().startswith("n"):
         # On a mox compute node: ready to run
-        run_all("GK", [1,1000,2000,3000,4000,5000,6000,7000,8000,9000,10000])
+        run_all("GG", [1,1000,2000,3000,4000,5000,6000,7000,8000,9000,10000])
     else:
         run_all("GG", 5)

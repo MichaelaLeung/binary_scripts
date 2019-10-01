@@ -13,7 +13,7 @@ import random
 import math 
 import csv
 
-def phase_temp()
+def phase_temp():
     data = []
     with open("/gscratch/vsm/mwjl/projects/binary/twostarsGG/twostars3_out_general.csv") as csvfile:
         readCSV = csv.reader(csvfile, delimiter=',')
