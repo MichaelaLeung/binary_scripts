@@ -55,11 +55,21 @@ def plot_mixingratios(infile, i, pair):
     axT.set_xlabel("Temperature [K]")
     axT.set_axisbelow(True)
     axT.plot(T2, P, color="black", label="Temperature", ls="--")
-    fig.savefig("/gscratch/vsm/mwjl/projects/binary/plots/" + str(i) + str(pair) + ".png", bbox_inches = "tight")
+    fig_name = "/gscratch/vsm/mwjl/projects/binary/plots/" + str(i) + str(pair) + ".png"
+    fig.savefig(fig_name, bbox_inches = "tight")
+    return(fig_name)
 
 def run_plots(values, pair):
+    inputs = []
     for i in values:
-        plot_mixingratios("/gscratch/vsm/mwjl/projects/binary/multiflare/io/spectra_info.dat",i, pair)
+        temp = plot_mixingratios("/gscratch/vsm/mwjl/projects/binary/multiflare/io/spectra_info.dat",i, pair)
+        inputs.append(temp)
+    gif_path = pair
+    plt.figure(figsize=(10,10))
+    with imageio.get_writer(gif_path, mode='I') as writer:
+    for i in range(len(inputs)):
+        writer.append_data(imageio.imread(inputs[i].format(i=i)))
+
 
 if __name__ == '__main__':
 

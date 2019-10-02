@@ -5,7 +5,6 @@ import matplotlib; matplotlib.use('agg')
 import matplotlib.pyplot as plt
 from matplotlib.collections import LineCollection
 from astropy.io import fits
-import smart
 import sys, os
 import datetime
 matplotlib.rcParams['text.usetex'] = False
