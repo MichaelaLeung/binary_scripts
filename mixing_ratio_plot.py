@@ -9,6 +9,7 @@ import datetime
 matplotlib.rcParams['text.usetex'] = False
 import random
 import math
+import imageio
 
 def plot_mixingratios(infile, i, pair):
     #setting up constants
@@ -66,9 +67,9 @@ def run_plots(values, pair):
         inputs.append(temp)
     gif_path = pair
     plt.figure(figsize=(10,10))
-    with imageio.get_writer(gif_path, mode='I') as writer:
-    for i in range(len(inputs)):
-        writer.append_data(imageio.imread(inputs[i].format(i=i)))
+    with imageio.get_writer(gif_path) as writer:
+         for i in range(len(inputs)):
+              writer.append_data(imageio.imread(inputs[i].format(i=i)))
 
 
 if __name__ == '__main__':
@@ -91,7 +92,7 @@ if __name__ == '__main__':
                                rm_after_submit = True)
     elif platform.node().startswith("n"):
         # On a mox compute node: ready to run
-        run_plots([1000,2000,3000,4000,5000,6000,7000,8000,9000,10000], "GG")
+        run_plots([10000,20000,30000,40000,50000,60000,70000,80000,90000,100000], "GM")
     else:
         plot_mixingratios('GG_output_pt.txt', 5)
 

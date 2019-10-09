@@ -45,8 +45,8 @@ def run_smart(infile, i):
         T2.append(temp2)
     np.savetxt("temp.pt",temp, header = first_line,comments = "")
         
-    label = "Ocean Loss"
-    sim.smartin.alb_file = "/gscratch/vsm/mwjl/projects/high_res/inputs/desert_highd.alb"
+    label = "Earth-like"
+    sim.smartin.alb_file = "/gscratch/vsm/mwjl/projects/high_res/inputs/composite1_txt.txt"
     
     sim.smartin.out_dir = '/gscratch/vsm/mwjl/projects/binary/scripts/smart_output'
     sim.lblin.out_dir = '/gscratch/vsm/mwjl/projects/binary/scripts/smart_output'
@@ -59,12 +59,12 @@ def run_smart(infile, i):
     sim.lblin.fundamntl_file = '/gscratch/vsm/alinc/fixed_input/fundamntl2016.dat'
     sim.lblin.lblabc_exe = '/gscratch/vsm/alinc/exec/lblabc_2016'
 
-    sim.load_atmosphere_from_pt("temp.pt", addn2 = False, scaleP = 1.0)
+    sim.load_atmosphere_from_pt("temp.pt", addn2 = True, scaleP = 1.0)
 
-    lamin = 0.5
-    lamax = 2.5
+    lamin = 0.1
+    lamax = 0.4
 
-    res = 1/(10*lamin)
+    res = 2
     sim.smartin.FWHM = res
     sim.smartin.sample_res = res
 
@@ -76,7 +76,7 @@ def run_smart(infile, i):
     sim.lblin.maxwn = 1e4/lamin
 
     sim.lblin.par_index = 7
-
+    sim.smartin.out_level = 2
     sim.gen_lblscripts()
     sim.run_lblabc()
     sim.write_smart(write_file = True)
@@ -89,11 +89,8 @@ def run_smart(infile, i):
 
     adj_flux = (flux/sflux)*math.pi
 
-    wl, flux = ocean_loss(lamin, lamax)
-    wl2, flux2 = ocean_loss_noO4(lamin, lamax)
-    fig, ax = plt.subplots(figsize = (10,10))
-    ax.plot(wl, flux, label = " 10 bar Ocean Loss")
-    ax.set_title(title)
+    fig, ax = plt.subplots(figsize = (20,12))
+    ax.plot(wl, adj_flux, label = "Earth-like atmosphere")
     ax.set_ylabel("Reflectance")
     ax.set_xlabel("Wavelength ($\mu$ m)")
     ax.legend()
@@ -106,7 +103,7 @@ if __name__ == '__main__':
         # On the mox login node: submit job
         runfile = __file__
         smart.utils.write_slurm_script_python(runfile,
-                               name="run_binary",
+                               name="SMRT_BI",
                                subname="submit.csh",
                                workdir = "",
                                nodes = 1,

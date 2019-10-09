@@ -11,6 +11,7 @@ matplotlib.rcParams['text.usetex'] = False
 import random
 import math 
 import csv
+import smart 
 
 def phase_temp():
     data = []
@@ -76,7 +77,7 @@ if __name__ == '__main__':
                                workdir = "",
                                nodes = 1,
                                mem = "500G",
-                               walltime = "10:00:00",
+                               walltime = "72:00:00",
                                ntasks = 28,
                                account = "vsm",
                                submit = True,

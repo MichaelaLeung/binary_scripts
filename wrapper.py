@@ -88,13 +88,13 @@ if __name__ == '__main__':
                                workdir = "",
                                nodes = 1,
                                mem = "500G",
-                               walltime = "10:00:00",
+                               walltime = "72:00:00",
                                ntasks = 28,
                                account = "vsm",
                                submit = True,
                                rm_after_submit = True)
     elif platform.node().startswith("n"):
         # On a mox compute node: ready to run
-        run_all("GG", [1,1000,2000,3000,4000,5000,6000,7000,8000,9000,10000])
+        run_all("GM", [1,10000,20000,30000,40000,50000,60000,70000,80000,90000,100000])
     else:
         run_all("GG", 5)

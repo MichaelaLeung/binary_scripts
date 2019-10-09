@@ -17,10 +17,10 @@ def csv_convert(pair):
         outfile = "/gscratch/vsm/mwjl/projects/binary/multiflare/data/GGTweights.csv"
     elif pair == "GK":
         infile = "/gscratch/vsm/mwjl/projects/binary/multiflare/data/GKTweights_temp.csv"
-        outfile = "/gscratch/vsm/mwjl/projects/binary/multiflare/data/GKTweights_temp.csv"
+        outfile = "/gscratch/vsm/mwjl/projects/binary/multiflare/data/GKTweights.csv"
     elif pair == "GM":
         infile = "/gscratch/vsm/mwjl/projects/binary/multiflare/data/GMTweights_temp.csv"
-        outfile = "/gscratch/vsm/mwjl/projects/binary/multiflare/data/GMTweights_temp.csv"
+        outfile = "/gscratch/vsm/mwjl/projects/binary/multiflare/data/GMTweights.csv"
     time_added = []
     data = []
     with open(infile) as csvfile:
