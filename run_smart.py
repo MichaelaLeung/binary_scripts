@@ -81,16 +81,25 @@ def run_smart(infile, i):
     sim.run_lblabc()
     sim.write_smart(write_file = True)
     sim.run_smart()
-       
-    sim.open_outputs()
-    wl = sim.output.rad.lam
-    flux = sim.output.rad.pflux
-    sflux = sim.output.rad.sflux
 
-    adj_flux = (flux/sflux)*math.pi
+    infile = '/gscratch/vsm/mwjl/projects/binary/scripts/smart_output/from_binary_25000_100000cm_sur.rad'
+    # Convert each line to vector, compose array of vectors
+    arrays = np.array([np.array(list(map(float, line.split()))) for line in open(infile)])
+
+    # Flatten and reshape into rectangle grid
+    arr = np.hstack(arrays).reshape((14, -1), order='F')
+
+    # Parse columns
+    lam   = arr[0,:]
+    wno   = arr[1,:]
+    solar = arr[2,:]
+    dir_flux  = arr[3,:]
+    diff_flux  = arr[4,:]
+
+    total_flux = dir_flux + diff_flux
 
     fig, ax = plt.subplots(figsize = (20,12))
-    ax.plot(wl, adj_flux, label = "Earth-like atmosphere")
+    ax.plot(lam, total_flux, label = "Earth-like atmosphere")
     ax.set_ylabel("Reflectance")
     ax.set_xlabel("Wavelength ($\mu$ m)")
     ax.legend()
