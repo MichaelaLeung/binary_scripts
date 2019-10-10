@@ -71,7 +71,7 @@ def run_all_smart(pair,values):
     run_twostars(pair)
     run_csv_conversion(pair)
     run_multiflare(pair)
-    run_plots(values)
+    run_plots(values, pair)
     run_smart_multi(values)
 
 
@@ -95,6 +95,6 @@ if __name__ == '__main__':
                                rm_after_submit = True)
     elif platform.node().startswith("n"):
         # On a mox compute node: ready to run
-        run_all("GM", [1,10000,20000,30000,40000,50000,60000,70000,80000,90000,100000])
+        run_all_smart("GG", [1,10000,20000,30000,40000,50000,60000,70000,80000,90000,100000])
     else:
         run_all("GG", 5)

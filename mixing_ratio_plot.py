@@ -48,13 +48,15 @@ def plot_mixingratios(infile, i, pair):
         ax.plot(gases[:,k], P, label=mol_names[k])
     ax.set_xlabel("Volume Mixing Ratio")
     ax.set_ylabel("Pressure [Pa]")
-    ax.set_ylim(10**(-15),1)
+    ax.set_xlim(10**(-15),1)
+    ax.set_ylim(0, 10**5)   
     ax.loglog()
     ax.legend()
 
     axT = ax.twiny()
     axT.set_xlabel("Temperature [K]")
     axT.set_axisbelow(True)
+#    axT.set_xlim(200,300)    
     axT.plot(T2, P, color="black", label="Temperature", ls="--")
     fig_name = "/gscratch/vsm/mwjl/projects/binary/plots/" + str(i) + str(pair) + ".png"
     fig.savefig(fig_name, bbox_inches = "tight")
@@ -68,8 +70,8 @@ def run_plots(values, pair):
     gif_path = pair
     plt.figure(figsize=(10,10))
     with imageio.get_writer(gif_path, mode='I') as writer:
-    for i in range(len(inputs)):
-        writer.append_data(imageio.imread(inputs[i].format(i=i)))
+        for i in range(len(inputs)):
+            writer.append_data(imageio.imread(inputs[i].format(i=i)))
 
 
 if __name__ == '__main__':
