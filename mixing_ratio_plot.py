@@ -9,6 +9,7 @@ import datetime
 matplotlib.rcParams['text.usetex'] = False
 import random
 import math
+import imageio
 
 def plot_mixingratios(infile, i, pair):
     #setting up constants
@@ -42,21 +43,20 @@ def plot_mixingratios(infile, i, pair):
     plt.switch_backend('agg')
 
     fig, ax = plt.subplots(figsize=(9,9))
-    ax.invert_yaxis()
     ax.plot(0,0,color="black", label="Temp.", ls="--")
     for k in range(len(mol_names)):
         ax.plot(gases[:,k], P, label=mol_names[k])
     ax.set_xlabel("Volume Mixing Ratio")
     ax.set_ylabel("Pressure [Pa]")
     ax.set_xlim(10**(-15),1)
-    ax.set_ylim(0, 10**5)   
+    ax.set_ylim(10**5,5)   
     ax.loglog()
     ax.legend()
 
     axT = ax.twiny()
     axT.set_xlabel("Temperature [K]")
     axT.set_axisbelow(True)
-#    axT.set_xlim(200,300)    
+    axT.set_xlim(200,300)    
     axT.plot(T2, P, color="black", label="Temperature", ls="--")
     fig_name = "/gscratch/vsm/mwjl/projects/binary/plots/" + str(i) + str(pair) + ".png"
     fig.savefig(fig_name, bbox_inches = "tight")
@@ -67,11 +67,11 @@ def run_plots(values, pair):
     for i in values:
         temp = plot_mixingratios("/gscratch/vsm/mwjl/projects/binary/multiflare/io/spectra_info.dat",i, pair)
         inputs.append(temp)
-    gif_path = pair
-    plt.figure(figsize=(10,10))
-    with imageio.get_writer(gif_path, mode='I') as writer:
-        for i in range(len(inputs)):
-            writer.append_data(imageio.imread(inputs[i].format(i=i)))
+#    gif_path = pair
+#    plt.figure(figsize=(10,10))
+#    with imageio.get_writer(gif_path, mode='I') as writer:
+#        for i in range(len(inputs)):
+#            writer.append_data(imageio.imread(inputs[i].format(i=i)))
 
 
 if __name__ == '__main__':
