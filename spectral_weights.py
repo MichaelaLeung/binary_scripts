@@ -52,3 +52,27 @@ def spectral_weights(pair):
         M_out = weight * M
         wl = G[0]
         return(wl, G_out,M_out)
+
+if __name__ == '__main__':
+
+    import platform
+
+    if platform.node().startswith("mox"):
+        # On the mox login node: submit job
+        runfile = __file__
+        smart.utils.write_slurm_script_python(runfile,
+                               name="PT_plot",
+                               subname="submit.csh",
+                               workdir = "",
+                               nodes = 1,
+                               mem = "500G",
+                               walltime = "10:00:00",
+                               ntasks = 28,
+                               account = "vsm",
+                               submit = True,
+                               rm_after_submit = True)
+    elif platform.node().startswith("n"):
+        # On a mox compute node: ready to run
+        spectral_weights('GG')
+    else:
+        spectral_weights('GG')
