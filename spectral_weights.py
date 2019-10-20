@@ -12,18 +12,21 @@ import math
 
 def spectral_weights(pair):
     if pair == 'GG':
-        infile = '/gscratch/vsm/mwjl/projects/binary/multiflare/data/GGT_weights.csv'
+        infile = '/gscratch/vsm/mwjl/projects/binary/multiflare/data/GGTweights.csv'
         G_star = '/gscratch/vsm/mwjl/packages/photochem_smart/fixed_input/specs/Sun.dat'
         stell = '/gscratch/vsm/mwjl/packages/photochem_smart/fixed_input/specs/Sun.dat'
         weights = np.genfromtxt(infile)
         weight = weights[1]
+ 
         G = np.genfromtxt(G_star)
+        print(np.shape(G), np.shape(weights)) 
         G = G[1]
+        print(weight, G)
         G_out = weight * G
         wl = G[0]
         return(wl, G_out,G_out)
     if pair == 'GK':
-        infile = '/gscratch/vsm/mwjl/projects/binary/multiflare/data/GGK_weights.csv'
+        infile = '/gscratch/vsm/mwjl/projects/binary/multiflare/data/GKTweights.csv'
         G_star = '/gscratch/vsm/mwjl/packages/photochem_smart/fixed_input/specs/Sun.dat'
         K_star = '/gscratch/vsm/mwjl/packages/photochem_smart/fixed_input/specs/Sun.dat'
         weights = np.genfromtxt(infile)
@@ -38,7 +41,7 @@ def spectral_weights(pair):
         wl = G[0]
         return(wl, G_out,K_out)
     if pair == 'GM':
-        infile = '/gscratch/vsm/mwjl/projects/binary/multiflare/data/GGM_weights.csv'
+        infile = '/gscratch/vsm/mwjl/projects/binary/multiflare/data/GKT_weights.csv'
         G_star = '/gscratch/vsm/mwjl/packages/photochem_smart/fixed_input/specs/Sun.dat'
         stell = '/gscratch/vsm/mwjl/packages/photochem_smart/fixed_input/specs/ADLeo.dat'
         weights = np.genfromtxt(infile)
