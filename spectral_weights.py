@@ -11,31 +11,31 @@ import math
 import csv
 
 def spec_out(pair):
-    G_spectra_file = '/Users/mwl/photochem_smart/fixed_input/specs/Kurucz1cm-1_susim_atlas2.dat'
+    G_spectra_file = '/gscratch/vsm/mwjl/packages/photochem_smart/fixed_input/specs/Kurucz1cm-1_susim_atlas2.dat'
     G = np.genfromtxt(G_spectra_file, skip_header = 11, skip_footer = 20000)
     G = G[1:]
     G_wn = G[:,0]
-    K_spectra_file = '/Users/mwl/photochem_smart/fixed_input/specs/ADLeo.dat'
+    K_spectra_file = '/gscratch/vsm/mwjl/packages/photochem_smart/fixed_input/specs/ADLeo.dat'
     K = np.genfromtxt(K_spectra_file, skip_header = 11, skip_footer = 20000)
     K = K[1:]
     K_wn = K[:,0]
-    M_spectra_file = '/Users/mwl/photochem_smart/fixed_input/specs/proxima_cen.dat'
+    M_spectra_file = '/gscratch/vsm/mwjl/packages/photochem_smart/fixed_input/specs/proxima_cen.dat'
     M = np.genfromtxt(M_spectra_file, skip_header = 11, skip_footer = 20000)
     M = M[1:]
     M_wn = M[:,0]
     if pair == "GG":
-        weights_file = 'GGTweights.csv'
-        out_name = "outGG.txt"
+        weights_file = '/gscratch/vsm/mwjl/projects/binary/multiflare/data/GGTweights.csv'
+        out_name = "/gscratch/vsm/mwjl/projects/binary/plots/outGG.txt"
         solar_flux1 = G[:,1]
         solar_flux2 = G[:,1]
     elif pair == "GK":
-        weights_file = 'GKTweights.csv'
-        out_name = "outGK.txt"
+        weights_file = '/gscratch/vsm/mwjl/projects/binary/multiflare/data/GKTweights.csv'
+        out_name = "/gscratch/vsm/mwjl/projects/binary/plots/outGK.txt"
         solar_flux1 = G[:,1]
         solar_flux2 = K[:,1]
     elif pair == "GK":
-        weights_file = 'GMTweights.csv'
-        out_name = "outGM.txt"
+        weights_file = '/gscratch/vsm/mwjl/projects/binary/multiflare/data/GMTweights.csv'
+        out_name = "/gscratch/vsm/mwjl/projects/binary/plots/outGM.txt"
         solar_flux1 = G[:,1]
         solar_flux2 = M[:,1]
     weights = []
@@ -69,19 +69,18 @@ def smart_spectral(lamin, lamax, pair):
     sim = smart.interface.Smart(tag = "prox")
     sim.set_run_in_place()
 
-    infile7 = "/Users/mwl/Documents/circumbinary/profile_Earth_proxb_.pt_filtered"
-    label = "/Users/mwl/Documents/circumbinary/Simulated Earth-like planet orbiting Proxima Centauri"
-    sim.smartin.alb_file = "/Users/mwl/Documents/high_res/composite1_txt.txt"
+    infile7 = "/gscratch/vsm/mwjl/projects/high_res/inputs/profile_Earth_proxb_.pt_filtered"
+    sim.smartin.alb_file = "/gscratch/vsm/mwjl/projects/high_res/inputs/composite1_txt.txt"
     sim.set_planet_proxima_b()
     sim.load_atmosphere_from_pt(infile7, addn2 = True)
     if pair == "GG":
-        sim.smartin.spec = "/Users/mwl/Documents/circumbinary/outGG.txt"
+        sim.smartin.spec = "/gscratch/vsm/mwjl/projects/binary/plots/outGG.txt"
     elif pair == "GM":
-        sim.smartin.spec = "/Users/mwl/Documents/circumbinary/outGM.txt"
+        sim.smartin.spec = "/gscratch/vsm/mwjl/projects/binary/plots/outGM.txt"
     elif pair == "GK":
-        sim.smartin.spec = "/Users/mwl/Documents/circumbinary/outGK.txt"
+        sim.smartin.spec = "/gscratch/vsm/mwjl/projects/binary/plots/outGK.txt"
     o2 = sim.atmosphere.gases[3]
-    o2.cia_file = '/Users/mwl/Documents/high_res/o4_calc.cia'
+    o2.cia_file = '/gscratch/vsm/mwjl/projects/high_res/inputs/o4_calc.cia'
     label = "Earth-Like"
     sim.set_planet_proxima_b()
     sim.set_star_proxima()
