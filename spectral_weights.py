@@ -1,60 +1,120 @@
 import numpy as np
-import matplotlib; matplotlib.use('agg')
+import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib.collections import LineCollection
 from astropy.io import fits
 import smart
 import sys, os
 import datetime
-matplotlib.rcParams['text.usetex'] = False
 import random
 import math
+import csv
 
-def spectral_weights(pair):
-    if pair == 'GG':
-        infile = '/gscratch/vsm/mwjl/projects/binary/multiflare/data/GGTweights.csv'
-        G_star = '/gscratch/vsm/mwjl/packages/photochem_smart/fixed_input/specs/Sun.dat'
-        stell = '/gscratch/vsm/mwjl/packages/photochem_smart/fixed_input/specs/Sun.dat'
-        weights = np.genfromtxt(infile)
-        weight = weights[1]
- 
-        G = np.genfromtxt(G_star)
-        print(np.shape(G), np.shape(weights)) 
-        G = G[1]
-        print(weight, G)
-        G_out = weight * G
-        wl = G[0]
-        return(wl, G_out,G_out)
-    if pair == 'GK':
-        infile = '/gscratch/vsm/mwjl/projects/binary/multiflare/data/GKTweights.csv'
-        G_star = '/gscratch/vsm/mwjl/packages/photochem_smart/fixed_input/specs/Sun.dat'
-        K_star = '/gscratch/vsm/mwjl/packages/photochem_smart/fixed_input/specs/Sun.dat'
-        weights = np.genfromtxt(infile)
-        weight = weights[1]
-        G = np.genfromtxt(G_star)
-        G = G[1]
-        G_out = weight * G
-        wl = G[0]
-        K = np.genfromtxt(K_star)
-        K = K[1]
-        K_out = weight * K
-        wl = G[0]
-        return(wl, G_out,K_out)
-    if pair == 'GM':
-        infile = '/gscratch/vsm/mwjl/projects/binary/multiflare/data/GKT_weights.csv'
-        G_star = '/gscratch/vsm/mwjl/packages/photochem_smart/fixed_input/specs/Sun.dat'
-        stell = '/gscratch/vsm/mwjl/packages/photochem_smart/fixed_input/specs/ADLeo.dat'
-        weights = np.genfromtxt(infile)
-        weight = weights[1]
-        G = np.genfromtxt(G_star)
-        G = G[1]
-        G_out = weight * G
-        wl = G[0]
-        M = np.genfromtxt(M_star)
-        M = M[1]
-        M_out = weight * M
-        wl = G[0]
-        return(wl, G_out,M_out)
+def spec_out(pair):
+    G_spectra_file = '/Users/mwl/photochem_smart/fixed_input/specs/Kurucz1cm-1_susim_atlas2.dat'
+    G = np.genfromtxt(G_spectra_file, skip_header = 11, skip_footer = 20000)
+    G = G[1:]
+    G_wn = G[:,0]
+    K_spectra_file = '/Users/mwl/photochem_smart/fixed_input/specs/ADLeo.dat'
+    K = np.genfromtxt(K_spectra_file, skip_header = 11, skip_footer = 20000)
+    K = K[1:]
+    K_wn = K[:,0]
+    M_spectra_file = '/Users/mwl/photochem_smart/fixed_input/specs/proxima_cen.dat'
+    M = np.genfromtxt(M_spectra_file, skip_header = 11, skip_footer = 20000)
+    M = M[1:]
+    M_wn = M[:,0]
+    if pair == "GG":
+        weights_file = 'GGTweights.csv'
+        out_name = "outGG.txt"
+        solar_flux1 = G[:,1]
+        solar_flux2 = G[:,1]
+    elif pair == "GK":
+        weights_file = 'GKTweights.csv'
+        out_name = "outGK.txt"
+        solar_flux1 = G[:,1]
+        solar_flux2 = K[:,1]
+    elif pair == "GK":
+        weights_file = 'GMTweights.csv'
+        out_name = "outGM.txt"
+        solar_flux1 = G[:,1]
+        solar_flux2 = M[:,1]
+    weights = []
+    with open(weights_file) as csvfile:
+        readCSV = csv.reader(csvfile, delimiter=',')
+        for row in readCSV:
+            weights.append(row)
+        weights = np.asarray(weights)
+        time = weights[:,0]
+        stell_1 = weights[:,1]
+        stell_2 = weights[:,2]
+        i = 0
+        stell_1_out = []
+        stell_2_out = []
+        stell_out = []
+        while i < min(len(solar_flux),len(stell_1)):
+           stell_1_out.append(float(solar_flux1[i]) * float(stell_1[i]))
+           stell_2_out.append(float(solar_flux2[i]) * float(stell_2[i]))
+           stell_out.append((float(stell_1_out[i]) + float(stell_2_out[i]))/2)
+           i = i+1
+        output = np.zeros((len(wn),2), dtype = 'float')
+        output[:,0] = wn
+        output[:,1] = stell_out
+        np.savetxt(out_name, output)
+        
+def smart_spectral(lamin, lamax, pair):
+    lamin = 0.74
+    lamax = 0.78
+
+    res = 1/(10*lamin)
+    sim = smart.interface.Smart(tag = "prox")
+    sim.set_run_in_place()
+
+    infile7 = "/Users/mwl/Documents/circumbinary/profile_Earth_proxb_.pt_filtered"
+    label = "/Users/mwl/Documents/circumbinary/Simulated Earth-like planet orbiting Proxima Centauri"
+    sim.smartin.alb_file = "/Users/mwl/Documents/high_res/composite1_txt.txt"
+    sim.set_planet_proxima_b()
+    sim.load_atmosphere_from_pt(infile7, addn2 = True)
+    if pair == "GG":
+        sim.smartin.spec = "/Users/mwl/Documents/circumbinary/outGG.txt"
+    elif pair == "GM":
+        sim.smartin.spec = "/Users/mwl/Documents/circumbinary/outGM.txt"
+    elif pair == "GK":
+        sim.smartin.spec = "/Users/mwl/Documents/circumbinary/outGK.txt"
+    o2 = sim.atmosphere.gases[3]
+    o2.cia_file = '/Users/mwl/Documents/high_res/o4_calc.cia'
+    label = "Earth-Like"
+    sim.set_planet_proxima_b()
+    sim.set_star_proxima()
+
+
+    sim.set_executables_automatically()
+    sim.smartin.sza = 57
+
+    sim.smartin.FWHM = res
+    sim.smartin.sample_res = res
+
+    sim.smartin.minwn = 1e4/lamax
+    sim.smartin.maxwn = 1e4/lamin 
+
+    sim.lblin.minwn = 1e4/lamax
+    sim.lblin.maxwn = 1e4/lamin 
+
+    sim.radstar = 0.1542
+
+    sim.gen_lblscripts()
+    sim.run_lblabc()
+    sim.write_smart(write_file = True)
+    sim.run_smart()
+    
+    sim.open_outputs()
+    wl = sim.output.rad.lam
+    sflux = sim.output.rad.sflux
+    flux = sim.output.rad.pflux
+    flux = flux/sflux
+    fig, ax = plt.subplots(figsize = (10,10))
+    plt.plot(wl, flux)
+    fig.savefig(str(lamin) +  "mixed_spec.png", bbox_inches = "tight")
+
 
 if __name__ == '__main__':
 
@@ -64,7 +124,7 @@ if __name__ == '__main__':
         # On the mox login node: submit job
         runfile = __file__
         smart.utils.write_slurm_script_python(runfile,
-                               name="PT_plot",
+                               name="nor_plt",
                                subname="submit.csh",
                                workdir = "",
                                nodes = 1,
@@ -76,6 +136,7 @@ if __name__ == '__main__':
                                rm_after_submit = True)
     elif platform.node().startswith("n"):
         # On a mox compute node: ready to run
-        spectral_weights('GG')
+        smart_spectral(0.7,0.8, 'GG')
     else:
-        spectral_weights('GG')
+        smart_spectral(0.75,0.76, 'GG')
+
