@@ -11,13 +11,14 @@ import random
 import math
 import subprocess
 from shutil import copyfile 
-
+import imageio
 
 from mixing_ratio_plot import plot_mixingratios
 from csv_convert import csv_convert
 from run_smart import run_smart
 from o3_plot import plot_o3
 from mixing_ratio_plot import run_plots
+from spectral_weights import smart_spectral
 
 def run_twostars(pair):
     if pair == "GG":
@@ -56,23 +57,45 @@ def run_plots(values, pair):
     run_plots(values,pair)
     plot_o3("/gscratch/vsm/mwjl/projects/binary/multiflare/io/o3coldepth.dat", pair)
 
-        
-def run_smart_multi(values):
+def plot_test(values, pair): 
+    run_plots(values, pair)
+
+from mixing_ratio_plot import run_plots
+
+def test_plot():
+    run_plots([100,200,300,400,500], "GG")        
+
+def run_smart_multi(values,pair):
     for i in values:
-        run_smart("/gscratch/vsm/mwjl/projects/binary/multiflare/io/spectra_info.dat", i)
+        smart_spectral(pair,i)
+    inputs = []
+    for i in values:
+        name = "/gscratch/vsm/mwjl/projects/binary/plots/smart_"+str(pair)+str(i)+".png"
+        inputs.append(name)
+    plt.figure(figsize=(4,4))
+    gif_path = str(pair) + "_smart.gif"
+    with imageio.get_writer(gif_path, mode='I') as writer:
+        for i in range(len(inputs)):
+            writer.append_data(imageio.imread(inputs[i].format(i=i)))    
 
 def run_all(pair, values):
     run_twostars(pair)
     run_csv_conversion(pair)
     run_multiflare(pair)
     run_plots(values, pair)
-
+ 
 def run_all_smart(pair,values):
+    sys.setrecursionlimit(15000)
     run_twostars(pair)
+    print('************************************************* twostars complete *************************************************') 
     run_csv_conversion(pair)
+    print('*************************************************** csv conversion complete *****************************************') 
     run_multiflare(pair)
+    print('**************************************************** multiflare complete ********************************************') 
     run_plots(values, pair)
-    run_smart_multi(values)
+    print('******************************************************* run plots complete *******************************************') 
+    run_smart_multi(values,pair)
+    print('******************************************************* run smart complete ********************************************') 
 
 
 if __name__ == '__main__':
@@ -95,6 +118,8 @@ if __name__ == '__main__':
                                rm_after_submit = True)
     elif platform.node().startswith("n"):
         # On a mox compute node: ready to run
-        run_all_smart("GG", [1,10000,20000,30000,40000,50000,60000,70000,80000,90000,100000])
+        num = range(1,40000,10000)
+        run_all_smart("GG", num)
+        run_all_smart("GM", num)
     else:
         run_all("GG", 5)

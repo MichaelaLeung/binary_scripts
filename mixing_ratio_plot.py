@@ -49,7 +49,7 @@ def plot_mixingratios(infile, i, pair):
     ax.set_xlabel("Volume Mixing Ratio")
     ax.set_ylabel("Pressure [Pa]")
     ax.set_xlim(10**(-15),1)
-    ax.set_ylim(10**5,5)   
+    ax.set_ylim(2*10**5,5)   
     ax.loglog()
     ax.legend()
 
@@ -63,15 +63,35 @@ def plot_mixingratios(infile, i, pair):
     return(fig_name)
 
 def run_plots(values, pair):
-    inputs = []
     for i in values:
-        temp = plot_mixingratios("/gscratch/vsm/mwjl/projects/binary/multiflare/io/spectra_info.dat",i, pair)
-        inputs.append(temp)
-#    gif_path = pair
-#    plt.figure(figsize=(10,10))
-#    with imageio.get_writer(gif_path, mode='I') as writer:
-#        for i in range(len(inputs)):
-#            writer.append_data(imageio.imread(inputs[i].format(i=i)))
+        plot_mixingratios("/gscratch/vsm/mwjl/projects/binary/multiflare/io/spectra_info.dat",i, pair)
+        #temp = "/gscratch/vsm/mwjl/projects/binary/plots/"+str(i)+str(pair)+".png"
+        #inputs.append(temp)
+    gif_path = str(pair) + ".gif"
+    nums = values
+    inputs = []
+    for i in nums: 
+        name = "/gscratch/vsm/mwjl/projects/binary/plots/"+str(i)+str(pair)+".png"
+        inputs.append(name)
+    plt.figure(figsize=(4,4))
+
+    with imageio.get_writer(gif_path, mode='I') as writer:
+        for i in range(len(inputs)):
+            writer.append_data(imageio.imread(inputs[i].format(i=i)))
+
+
+def gif_only(values, pair): 
+    gif_path = str(pair) + ".gif"
+    nums = values
+    inputs = []
+    for i in nums:
+        name = "/gscratch/vsm/mwjl/projects/binary/plots/"+str(i)+str(pair)+".png"
+        inputs.append(name)
+    plt.figure(figsize=(4,4))
+
+    with imageio.get_writer(gif_path, mode='I') as writer:
+        for i in range(len(inputs)):
+            writer.append_data(imageio.imread(inputs[i].format(i=i)))
 
 
 if __name__ == '__main__':
@@ -94,7 +114,10 @@ if __name__ == '__main__':
                                rm_after_submit = True)
     elif platform.node().startswith("n"):
         # On a mox compute node: ready to run
-        run_plots([10000,20000,30000,40000,50000,60000,70000,80000,90000,100000], "GG")
+        num = range(0,40000,100)
+        gif_only(num, "GM")    
+#run_plots(num, "GM")
+    #    run_plots(num, "GG")
     else:
         plot_mixingratios('GG_output_pt.txt', 5)
 

@@ -14,7 +14,7 @@ from shutil import copyfile
 import platform
 
 
-def run_smart(infile, i):
+def run_smart(infile, i, pair):
     place = '/gscratch/vsm/mwjl/projects/binary/scripts/smart/'
     sim = smart.interface.Smart(tag = "from_binary")
     sim.set_run_in_place(place)
@@ -103,7 +103,7 @@ def run_smart(infile, i):
     ax.set_ylabel("Reflectance")
     ax.set_xlabel("Wavelength ($\mu$ m)")
     ax.legend()
-    fig.savefig("/gscratch/vsm/mwjl/projects/binary/plots/smart.png")
+    fig.savefig("/gscratch/vsm/mwjl/projects/binary/plots/smart_" + str(pair) + str(i) +".png")
 
 
 if __name__ == '__main__':
@@ -124,7 +124,7 @@ if __name__ == '__main__':
                                rm_after_submit = True)
     elif platform.node().startswith("n"):
         # On a mox compute node: ready to run
-        run_smart("/gscratch/vsm/mwjl/projects/binary/multiflare/io/spectra_info.dat", 10)
+        run_smart("/gscratch/vsm/mwjl/projects/binary/multiflare/io/spectra_info.dat", 10, "GG")
     else:
         run_smart("spectra_info.dat", 10)
 

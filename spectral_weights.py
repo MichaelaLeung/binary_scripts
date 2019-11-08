@@ -1,5 +1,5 @@
 import numpy as np
-import matplotlib
+import matplotlib; matplotlib.use('agg')
 import matplotlib.pyplot as plt
 from matplotlib.collections import LineCollection
 from astropy.io import fits
@@ -12,15 +12,15 @@ import csv
 
 def spec_out(pair):
     G_spectra_file = '/gscratch/vsm/mwjl/packages/photochem_smart/fixed_input/specs/Kurucz1cm-1_susim_atlas2.dat'
-    G = np.genfromtxt(G_spectra_file, skip_header = 11, skip_footer = 20000)
+    G = np.genfromtxt(G_spectra_file, skip_header = 11, skip_footer = 10000)
     G = G[1:]
     G_wn = G[:,0]
     K_spectra_file = '/gscratch/vsm/mwjl/packages/photochem_smart/fixed_input/specs/ADLeo.dat'
-    K = np.genfromtxt(K_spectra_file, skip_header = 11, skip_footer = 20000)
+    K = np.genfromtxt(K_spectra_file, skip_header = 1)
     K = K[1:]
     K_wn = K[:,0]
     M_spectra_file = '/gscratch/vsm/mwjl/packages/photochem_smart/fixed_input/specs/proxima_cen.dat'
-    M = np.genfromtxt(M_spectra_file, skip_header = 11, skip_footer = 20000)
+    M = np.genfromtxt(M_spectra_file, skip_header = 400)
     M = M[1:]
     M_wn = M[:,0]
     if pair == "GG":
@@ -51,28 +51,57 @@ def spec_out(pair):
         stell_1_out = []
         stell_2_out = []
         stell_out = []
-        while i < min(len(solar_flux),len(stell_1)):
+        while i < min(len(solar_flux1),len(solar_flux2),len(stell_1)):
            stell_1_out.append(float(solar_flux1[i]) * float(stell_1[i]))
            stell_2_out.append(float(solar_flux2[i]) * float(stell_2[i]))
            stell_out.append((float(stell_1_out[i]) + float(stell_2_out[i]))/2)
            i = i+1
-        output = np.zeros((len(wn),2), dtype = 'float')
+        wn = np.zeros(len(solar_flux1))
+        stell_out = np.zeros(len(solar_flux1))
+        output = np.zeros((len(solar_flux1),2), dtype = 'float')
         output[:,0] = wn
         output[:,1] = stell_out
         np.savetxt(out_name, output)
         
-def smart_spectral(lamin, lamax, pair):
-    lamin = 0.74
-    lamax = 0.78
+def smart_spectral(pair,i):
+    lamin = 0.1
+    lamax = 0.4
+    infile = '/gscratch/vsm/mwjl/projects/binary/multiflare/io/spectra_info.dat'
+
+    #setting up constants
+    block_length = 128
+    skip_lines = 7
+    i = int(i)
+    #getting molecule names from input file
+    with open(infile) as f:
+        first_line = f.readline()
+    mol_names_full = []
+    first_line2 = first_line.strip('\n')
+    first_line2 = first_line2.split(" ")
+    for j in first_line2:
+        if j != '':
+            mol_names_full.append(j)
+    mol_names = mol_names_full[2:]
+    #finding the correct block in the long output file
+    temp = np.genfromtxt(infile, skip_header = (1 + (block_length + skip_lines)*(i-1)), max_rows = block_length)
+    #separating out the gases, P and T
+    gases = temp[:,2:]
+    P = temp[:,0]
+    T = temp[:,1]
+    T2 = []
+    for b in T:
+        temp2 = float(b)
+        T2.append(temp2)
+    np.savetxt("temp.pt",temp, header = first_line,comments = "")
 
     res = 1/(10*lamin)
     sim = smart.interface.Smart(tag = "prox")
     sim.set_run_in_place()
 
-    infile7 = "/gscratch/vsm/mwjl/projects/high_res/inputs/profile_Earth_proxb_.pt_filtered"
+   # infile7 = "/gscratch/vsm/mwjl/projects/high_res/inputs/profile_Earth_proxb_.pt_filtered"
     sim.smartin.alb_file = "/gscratch/vsm/mwjl/projects/high_res/inputs/composite1_txt.txt"
     sim.set_planet_proxima_b()
-    sim.load_atmosphere_from_pt(infile7, addn2 = True)
+    sim.load_atmosphere_from_pt("temp.pt", addn2 = True)
     if pair == "GG":
         sim.smartin.spec = "/gscratch/vsm/mwjl/projects/binary/plots/outGG.txt"
     elif pair == "GM":
@@ -112,7 +141,9 @@ def smart_spectral(lamin, lamax, pair):
     flux = flux/sflux
     fig, ax = plt.subplots(figsize = (10,10))
     plt.plot(wl, flux)
-    fig.savefig(str(lamin) +  "mixed_spec.png", bbox_inches = "tight")
+    name = "/gscratch/vsm/mwjl/projects/binary/plots/smart_"+str(pair)+str(i)+".png"
+
+    fig.savefig(name, bbox_inches = "tight")
 
 
 if __name__ == '__main__':
@@ -135,7 +166,7 @@ if __name__ == '__main__':
                                rm_after_submit = True)
     elif platform.node().startswith("n"):
         # On a mox compute node: ready to run
-        smart_spectral(0.7,0.8, 'GG')
+        smart_spectral('GG', 1000)
     else:
         smart_spectral(0.75,0.76, 'GG')
 
