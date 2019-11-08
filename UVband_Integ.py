@@ -10,10 +10,14 @@ import random
 import math
 import csv
 
-def integrate(pair, band, i):
+from spectral_weights import smart_spectral_integ
+print("imports")
+
+def integrate(pair, band, h):
+    print("integrate")
     f = open("/gscratch/vsm/mwjl/projects/binary/scripts/integrations.txt", "a")
-    wl, flux = smart_spectral_integ(pair, band, i, 0.01)
-    wl_low, flux_low = smart_spectral_integ(pair, band, i, 1)
+    wl, flux = smart_spectral_integ(pair, band, h, 0.01)
+    wl_low, flux_low = smart_spectral_integ(pair, band, h, 1)
 
     long_flux = []
     for i in flux_low:
@@ -50,15 +54,17 @@ def integrate(pair, band, i):
 
     import scipy.integrate as integrate
     adds = integrate.trapz(out, wl[:-25])
-    
+    print(adds)    
     name = str(abs(adds)), str(i), str(pair)
     f = open("/gscratch/vsm/mwjl/projects/binary/scripts/integrations.txt", "a")
     f.write(str(name) + "\n")
+ #   return(pair, band, i)
 
-def output(i):
-    integrate('GG', 'a', i)
-    integrate('GG', 'b', i)
-    integrate('GG', 'c', i)
+def output(pair,i):
+    print("output")
+    integrate(pair, 'a', i)
+    integrate(pair, 'b', i)
+    integrate(pair, 'c', i)
 
 if __name__ == '__main__':
 
@@ -68,7 +74,7 @@ if __name__ == '__main__':
         # On the mox login node: submit job
         runfile = __file__
         smart.utils.write_slurm_script_python(runfile,
-                               name="nor_plt",
+                               name="UV_integ",
                                subname="submit.csh",
                                workdir = "",
                                nodes = 1,
@@ -80,6 +86,7 @@ if __name__ == '__main__':
                                rm_after_submit = True)
     elif platform.node().startswith("n"):
         # On a mox compute node: ready to run
+        print("script submitted")
         output(5)
     else:
         output(6)

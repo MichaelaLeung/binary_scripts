@@ -78,6 +78,12 @@ def run_smart_multi(values,pair):
         for i in range(len(inputs)):
             writer.append_data(imageio.imread(inputs[i].format(i=i)))    
 
+from UVband_Integ import output
+
+def integration_multi(values, pair): 
+    for i in values:
+        output(pair, i)
+
 def run_all(pair, values):
     run_twostars(pair)
     run_csv_conversion(pair)
@@ -96,7 +102,8 @@ def run_all_smart(pair,values):
     print('******************************************************* run plots complete *******************************************') 
     run_smart_multi(values,pair)
     print('******************************************************* run smart complete ********************************************') 
-
+    integration_multi(values, pair)
+    print('********************************************************run integration complete ************************************')
 
 if __name__ == '__main__':
 

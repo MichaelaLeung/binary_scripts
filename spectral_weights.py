@@ -236,7 +236,7 @@ def smart_spectral_integ(pair,band,i, res):
     name = "/gscratch/vsm/mwjl/projects/binary/plots/smart_"+str(band)+str(pair)+str(i)+".png"
 
     fig.savefig(name, bbox_inches = "tight")
-
+    return(wl,flux)
 
 if __name__ == '__main__':
 
@@ -258,7 +258,7 @@ if __name__ == '__main__':
                                rm_after_submit = True)
     elif platform.node().startswith("n"):
         # On a mox compute node: ready to run
-        smart_spectral('GG', 1000, 0.01)
+        smart_spectral('GG', 1001)
     else:
         smart_spectral(0.75,0.76, 'GG')
 
