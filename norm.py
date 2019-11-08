@@ -17,7 +17,7 @@ def normalize(pair,i):
     bi_wl, bi_flux = smart_spectral(pair,i)
     norm_flux = bi_flux/flux
     fig, ax = plt.subplots(figsize = (10,10))
-    plt.plot(wl, flux)
+    plt.plot(wl, norm_flux)
     name = "/gscratch/vsm/mwjl/projects/binary/plots/norm"+str(pair)+str(i)+".png"
     fig.savefig(name, bbox_inches = "tight")
 
