@@ -64,7 +64,7 @@ def spec_out(pair):
         np.savetxt(out_name, output)
 
 def smart_spectral(pair,i):
-        
+    place = '/gscratch/vsm/mwjl/projects/binary/scripts/smart/'
     infile = '/gscratch/vsm/mwjl/projects/binary/multiflare/io/spectra_info.dat'
     res = 0.01
     lamin = 0.10
@@ -96,8 +96,8 @@ def smart_spectral(pair,i):
         T2.append(temp2)
     np.savetxt("temp.pt",temp, header = first_line,comments = "")
     
-    sim = smart.interface.Smart(tag = "prox")
-    sim.set_run_in_place()
+    sim = smart.interface.Smart(tag = "earth_bi")
+    sim.set_run_in_place(place)
 
    # infile7 = "/gscratch/vsm/mwjl/projects/high_res/inputs/profile_Earth_proxb_.pt_filtered"
     sim.smartin.alb_file = "/gscratch/vsm/mwjl/projects/high_res/inputs/composite1_txt.txt"

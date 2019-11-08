@@ -15,10 +15,14 @@ import imageio
 
 from mixing_ratio_plot import plot_mixingratios
 from csv_convert import csv_convert
-from run_smart import run_smart
+from run_smart import run_smart_toa
 from o3_plot import plot_o3
 from mixing_ratio_plot import run_plots
 from spectral_weights import smart_spectral
+from UVband_Integ import output
+from mixing_ratio_plot import run_plots
+from norm import normalize
+
 
 def run_twostars(pair):
     if pair == "GG":
@@ -60,8 +64,6 @@ def run_plots(values, pair):
 def plot_test(values, pair): 
     run_plots(values, pair)
 
-from mixing_ratio_plot import run_plots
-
 def test_plot():
     run_plots([100,200,300,400,500], "GG")        
 
@@ -78,19 +80,16 @@ def run_smart_multi(values,pair):
         for i in range(len(inputs)):
             writer.append_data(imageio.imread(inputs[i].format(i=i)))    
 
-from UVband_Integ import output
-
 def integration_multi(values, pair): 
     for i in values:
         output(pair, i)
 
-def run_all(pair, values):
-    run_twostars(pair)
-    run_csv_conversion(pair)
-    run_multiflare(pair)
-    run_plots(values, pair)
+def normalize_multi(pair,values):
+    for i in values:
+        normalize(pair,i)
+    
  
-def run_all_smart(pair,values):
+def run_all(pair,values):
     sys.setrecursionlimit(15000)
     run_twostars(pair)
     print('************************************************* twostars complete *************************************************') 
@@ -104,6 +103,8 @@ def run_all_smart(pair,values):
     print('******************************************************* run smart complete ********************************************') 
     integration_multi(values, pair)
     print('********************************************************run integration complete ************************************')
+    normalize_multi(values, pair)
+    print('********************************************************run integration complete ***********************************
 
 if __name__ == '__main__':
 

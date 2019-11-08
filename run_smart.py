@@ -14,9 +14,9 @@ from shutil import copyfile
 import platform
 
 
-def run_smart(infile, i, pair):
+def run_smart_surface(infile, i, pair):
     place = '/gscratch/vsm/mwjl/projects/binary/scripts/smart/'
-    sim = smart.interface.Smart(tag = "from_binary")
+    sim = smart.interface.Smart(tag = "earth")
     sim.set_run_in_place(place)
 
     #setting up constants
@@ -104,6 +104,55 @@ def run_smart(infile, i, pair):
     ax.set_xlabel("Wavelength ($\mu$ m)")
     ax.legend()
     fig.savefig("/gscratch/vsm/mwjl/projects/binary/plots/smart_" + str(pair) + str(i) +".png")
+
+def run_smart_toa():
+    place = '/gscratch/vsm/mwjl/projects/binary/scripts/smart/'
+    sim = smart.interface.Smart(tag = "earth")
+    sim.set_run_in_place(place)
+        
+    label = "Earth-like"
+    sim.smartin.alb_file = "/gscratch/vsm/mwjl/projects/high_res/inputs/composite1_txt.txt"
+    
+    sim.smartin.out_dir = '/gscratch/vsm/mwjl/projects/binary/scripts/smart_output'
+    sim.lblin.out_dir = '/gscratch/vsm/mwjl/projects/binary/scripts/smart_output'
+    sim.smartin.abs_dir = '/gscratch/vsm/mwjl/projects/binary/scripts/smart_output'
+
+    sim.set_executables_automatically()
+
+    sim.lblin.par_file = '/gscratch/vsm/alinc/fixed_input/HITRAN2016.par' #/gscratch/vsm/alinc/fixed_input/
+    sim.lblin.hitran_tag = 'hitran2016'
+    sim.lblin.fundamntl_file = '/gscratch/vsm/alinc/fixed_input/fundamntl2016.dat'
+    sim.lblin.lblabc_exe = '/gscratch/vsm/alinc/exec/lblabc_2016'
+
+    sim.load_atmosphere_from_pt("temp.pt", addn2 = True, scaleP = 1.0)
+
+    lamin = 0.1
+    lamax = 0.4
+
+    res = 2
+    sim.smartin.FWHM = res
+    sim.smartin.sample_res = res
+
+
+    sim.smartin.minwn = 1e4/lamax
+    sim.smartin.maxwn = 1e4/lamin 
+
+    sim.lblin.minwn = 1e4/lamax
+    sim.lblin.maxwn = 1e4/lamin
+
+    sim.lblin.par_index = 7
+    sim.smartin.out_level = 2
+    sim.gen_lblscripts()
+    sim.run_lblabc()
+    sim.write_smart(write_file = True)
+    sim.run_smart()
+    sim.open_outputs()
+    wl = sim.output.rad.lam
+    flux = sim.output.rad.pflux
+    sflux = sim.output.rad.sflux
+    flux = flux/sflux
+
+    return(wl, flux)
 
 
 if __name__ == '__main__':
