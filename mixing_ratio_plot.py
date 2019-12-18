@@ -67,7 +67,7 @@ def run_plots(values, pair):
         plot_mixingratios("/gscratch/vsm/mwjl/projects/binary/multiflare/io/spectra_info.dat",i, pair)
         #temp = "/gscratch/vsm/mwjl/projects/binary/plots/"+str(i)+str(pair)+".png"
         #inputs.append(temp)
-    gif_path = str(pair) + ".gif"
+    gif_path = "/gscratch/vsm/mwjl/projects/binary/plots/" + str(pair) + ".gif"
     nums = values
     inputs = []
     for i in nums: 
@@ -114,10 +114,10 @@ if __name__ == '__main__':
                                rm_after_submit = True)
     elif platform.node().startswith("n"):
         # On a mox compute node: ready to run
-        num = range(0,40000,100)
-        gif_only(num, "GM")    
+        num = range(0,45000,100)
+        run_plots(num, "GM")    
 #run_plots(num, "GM")
-    #    run_plots(num, "GG")
+        run_plots(num, "GG")
     else:
         plot_mixingratios('GG_output_pt.txt', 5)
 

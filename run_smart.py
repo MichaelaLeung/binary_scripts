@@ -61,7 +61,7 @@ def run_smart_surface(infile, i, pair):
 
     sim.load_atmosphere_from_pt("temp.pt", addn2 = True, scaleP = 1.0)
 
-    lamin = 0.1
+    lamin = 0.2
     lamax = 0.4
 
     res = 2
@@ -126,7 +126,7 @@ def run_smart_toa():
 
     sim.load_atmosphere_from_pt("temp.pt", addn2 = True, scaleP = 1.0)
 
-    lamin = 0.1
+    lamin = 0.2
     lamax = 0.4
 
     res = 2

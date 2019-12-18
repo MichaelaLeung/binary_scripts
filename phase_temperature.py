@@ -12,10 +12,12 @@ import random
 import math 
 import csv
 import smart 
+print('imports')
 
-def phase_temp():
+def phase_temp(pair):
+    print('pt start') 
     data = []
-    with open("/gscratch/vsm/mwjl/projects/binary/twostarsGG/twostars3_out_general.csv") as csvfile:
+    with open("/gscratch/vsm/mwjl/projects/binary/twostars" + str(pair)+ "/twostars3_out_general.csv") as csvfile:
         readCSV = csv.reader(csvfile, delimiter=',')
         for row in readCSV:
             data.append(row[3:5])
@@ -44,24 +46,25 @@ def phase_temp():
     t_final = []
     block_length = 128
     skip_lines = 7
+
     i = 0
 
-    while i < 86400: 
+    while i < len(star2): 
         temp = np.genfromtxt(infile, skip_header = (1 + (block_length + skip_lines)*(i-1)), max_rows = block_length)
         T = temp[-1:,1]
         t_final.append(float(T))
-        print(T)
-        i = i+1
+        print(T,i)
+        i = i+10
         
     matplotlib.rc('font',**{'family':'serif','serif':['Computer Modern']})
     matplotlib.rcParams['font.size'] = 15.0
     matplotlib.rc('text', usetex=False)
     plt.switch_backend('agg')
-
+    fig, ax = plt.subplots(figsize = (10,10))
     ax.plot(range(len(t_final)), t_final)
     ax.set_xlabel("Time stamp")
-    ax.set_ylabel("Temperature")
-    fig.savefig("/gscratch/vsm/mwjl/projects/binary/plots/phase_temp.png", bbox_inches = "tight")
+    ax.set_ylabel("Surface Temperature")
+    fig.savefig("/gscratch/vsm/mwjl/projects/binary/plots/phase_temp" + str(pair)+ ".png", bbox_inches = "tight")
 
 
 if __name__ == '__main__':
@@ -84,6 +87,6 @@ if __name__ == '__main__':
                                rm_after_submit = True)
     elif platform.node().startswith("n"):
         # On a mox compute node: ready to run
-        phase_temp()
+        phase_temp('GM')
     else:
         phase_temp()
