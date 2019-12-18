@@ -21,6 +21,19 @@ def normalize(pair,i):
     name = "/gscratch/vsm/mwjl/projects/binary/plots/norm"+str(pair)+str(i)+".png"
     fig.savefig(name, bbox_inches = "tight")
 
+def normalize_integration(pair,band,i):
+    if band == 'a':
+        lamin = 0.315
+        lamax = 0.40
+    elif band == 'b':
+        lamin = 0.28
+        lamax = 0.315
+    elif band == 'c':
+        lamin = 0.10
+        lamax = 0.28
+    wl, flux = run_smart_toa(lamin, lamax)
+    bi_wl, bi_flux = smart_spectral_integ(pair,band,i,0.01)
+
 if __name__ == '__main__':
 
     import platform

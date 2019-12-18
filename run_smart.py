@@ -105,7 +105,7 @@ def run_smart_surface(infile, i, pair):
     ax.legend()
     fig.savefig("/gscratch/vsm/mwjl/projects/binary/plots/smart_" + str(pair) + str(i) +".png")
 
-def run_smart_toa():
+def run_smart_toa(lamin = 0.1, lamax = 0.4, res = 0.01):
     place = '/gscratch/vsm/mwjl/projects/binary/scripts/smart/'
     sim = smart.interface.Smart(tag = "earth")
     sim.set_run_in_place(place)
