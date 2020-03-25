@@ -67,7 +67,7 @@ def smart_spectral(pair,i):
     place = '/gscratch/vsm/mwjl/projects/binary/scripts/smart/'
     infile = '/gscratch/vsm/mwjl/projects/binary/multiflare/io/spectra_info.dat'
     res = 0.01
-    lamin = 0.10
+    lamin = 0.20
     lamax = 0.40
 
     #setting up constants
@@ -156,7 +156,7 @@ def smart_spectral_integ(pair,band,i, res):
         lamin = 0.28
         lamax = 0.315
     elif band == 'c':
-        lamin = 0.10
+        lamin = 0.18
         lamax = 0.28
         
     infile = '/gscratch/vsm/mwjl/projects/binary/multiflare/io/spectra_info.dat'
@@ -187,8 +187,9 @@ def smart_spectral_integ(pair,band,i, res):
         T2.append(temp2)
     np.savetxt("temp.pt",temp, header = first_line,comments = "")
     
-    sim = smart.interface.Smart(tag = "prox")
-    sim.set_run_in_place()
+    sim = smart.interface.Smart(tag = "bi")
+    place = '/gscratch/vsm/mwjl/projects/binary/scripts/smart_output/'
+    sim.set_run_in_place(place)
 
    # infile7 = "/gscratch/vsm/mwjl/projects/high_res/inputs/profile_Earth_proxb_.pt_filtered"
     sim.smartin.alb_file = "/gscratch/vsm/mwjl/projects/high_res/inputs/composite1_txt.txt"

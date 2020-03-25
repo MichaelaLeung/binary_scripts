@@ -13,10 +13,15 @@ import math
 import csv
 
 def plot_o3(infile, pair):
-    infile = "o3coldepth.dat"
     file = np.genfromtxt(infile, skip_header = 1)
     data = []
-    with open("twostars3_out_general.csv") as csvfile:
+    if pair == "GG":
+        csv_path = "/gscratch/vsm/mwjl/projects/binary/twostarsGG/twostars3_out_general.csv"
+    elif pair == "GK":
+        csv_path = '/gscratch/vsm/mwjl/projects/binary/twostarsGM/twostars3_out_general.csv'
+    elif pair == "GM":
+        csv_path = '/gscratch/vsm/mwjl/projects/binary/twostarsGK/twostars3_out_general.csv'        
+    with open(csv_path) as csvfile:
         readCSV = csv.reader(csvfile, delimiter=',')
         for row in readCSV:
             data.append(row[3:5])
@@ -58,7 +63,7 @@ def plot_o3(infile, pair):
 
     ax[1].set_xlabel('Time (days)')
 
-    fig.savefig("/gscratch/vsm/mwjl/projects/binary/" + str(pair)+"o3plot.png", bbox_inches = 'tight')
+    fig.savefig("/gscratch/vsm/mwjl/projects/binary/plots/" + str(pair)+"o3plot.png", bbox_inches = 'tight')
 
 if __name__ == '__main__':
 

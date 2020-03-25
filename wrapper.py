@@ -22,7 +22,7 @@ from spectral_weights import smart_spectral
 from UVband_Integ import output
 from mixing_ratio_plot import run_plots
 from norm import normalize
-
+from phase_temperature import phase_temp
 
 def run_twostars(pair):
     if pair == "GG":
@@ -44,20 +44,23 @@ def run_csv_conversion(pair):
 def run_multiflare(pair):
     os.chdir("/gscratch/vsm/mwjl/projects/binary/multiflare")
     if pair == "GG":
+        subprocess.call(["make"])
         subprocess.call(["./recover"], shell = True)
         copyfile("input_ggbin", "input")
         subprocess.call(["./circumbinary"], shell = True)
     elif pair == "GK":
+        subprocess.call(["make"])
         subprocess.call(["./recover"], shell = True)
         copyfile("input_gkbin", "input")
         subprocess.call(["./circumbinary"], shell = True)
     elif pair == "GM":
+        subprocess.call(["make"])
         subprocess.call(["./recover"], shell = True)
         copyfile("input_gmbin", "input")
         subprocess.call(["./circumbinary"], shell = True)      
         
 
-def run_plots(values, pair):        
+def run_plots_multi(values, pair):        
     run_plots(values,pair)
     plot_o3("/gscratch/vsm/mwjl/projects/binary/multiflare/io/o3coldepth.dat", pair)
 
@@ -96,15 +99,25 @@ def run_all(pair,values):
     run_csv_conversion(pair)
     print('*************************************************** csv conversion complete *****************************************') 
     run_multiflare(pair)
-    print('**************************************************** multiflare complete ********************************************') 
-    run_plots(values, pair)
+    run_plots_multi(values, pair)
     print('******************************************************* run plots complete *******************************************') 
     run_smart_multi(values,pair)
     print('******************************************************* run smart complete ********************************************') 
     integration_multi(values, pair)
     print('********************************************************run integration complete ************************************')
     normalize_multi(values, pair)
-    print('********************************************************run integration complete ***********************************
+    print('********************************************************normalization complete ***********************************')
+
+def prelim_run():
+    sys.setrecursionlimit(15000)
+    pair_list = "GM", "GG"
+    values = range(0,45000,100)
+    for pair in pair_list:
+        run_twostars(pair)
+        run_csv_conversion(pair)
+        run_multiflare(pair)
+        run_plots_multi(values, pair)
+        phase_temp(pair)
 
 if __name__ == '__main__':
 
@@ -114,7 +127,7 @@ if __name__ == '__main__':
         # On the mox login node: submit job
         runfile = __file__
         smart.utils.write_slurm_script_python(runfile,
-                               name="run_binary",
+                               name="prelim_run",
                                subname="submit.csh",
                                workdir = "",
                                nodes = 1,
@@ -126,8 +139,10 @@ if __name__ == '__main__':
                                rm_after_submit = True)
     elif platform.node().startswith("n"):
         # On a mox compute node: ready to run
-        num = range(1,40000,10000)
-        run_all_smart("GG", num)
-        run_all_smart("GM", num)
+        prelim_run()
+#        run_multiflare('GG')
+        num = range(1,20000,100)
+        run_plots_multi(num, "GM")
+#        run_all_smart("GM", num)
     else:
         run_all("GG", 5)

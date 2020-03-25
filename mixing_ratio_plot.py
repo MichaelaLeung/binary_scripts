@@ -49,14 +49,14 @@ def plot_mixingratios(infile, i, pair):
     ax.set_xlabel("Volume Mixing Ratio")
     ax.set_ylabel("Pressure [Pa]")
     ax.set_xlim(10**(-15),1)
-    ax.set_ylim(2*10**5,5)   
+    ax.set_ylim(10**5,10)   
     ax.loglog()
     ax.legend()
 
     axT = ax.twiny()
     axT.set_xlabel("Temperature [K]")
     axT.set_axisbelow(True)
-    axT.set_xlim(200,300)    
+    axT.set_xlim(180,320)    
     axT.plot(T2, P, color="black", label="Temperature", ls="--")
     fig_name = "/gscratch/vsm/mwjl/projects/binary/plots/" + str(i) + str(pair) + ".png"
     fig.savefig(fig_name, bbox_inches = "tight")
@@ -65,9 +65,10 @@ def plot_mixingratios(infile, i, pair):
 def run_plots(values, pair):
     for i in values:
         plot_mixingratios("/gscratch/vsm/mwjl/projects/binary/multiflare/io/spectra_info.dat",i, pair)
-        #temp = "/gscratch/vsm/mwjl/projects/binary/plots/"+str(i)+str(pair)+".png"
+#        plot_mixingratios("/gscratch/vsm/mwjl/projects/binary/spectra_info.dat", i, pair) 
+       #temp = "/gscratch/vsm/mwjl/projects/binary/plots/"+str(i)+str(pair)+".png"
         #inputs.append(temp)
-    gif_path = str(pair) + ".gif"
+    gif_path = "/gscratch/vsm/mwjl/projects/binary/plots/" + str(pair) + ".gif"
     nums = values
     inputs = []
     for i in nums: 
@@ -114,10 +115,11 @@ if __name__ == '__main__':
                                rm_after_submit = True)
     elif platform.node().startswith("n"):
         # On a mox compute node: ready to run
-        num = range(0,40000,100)
+        num = range(1,45000,100)
+        run_plots(num, "GM")
         gif_only(num, "GM")    
 #run_plots(num, "GM")
-    #    run_plots(num, "GG")
+#        run_plots(num, "GG")
     else:
         plot_mixingratios('GG_output_pt.txt', 5)
 

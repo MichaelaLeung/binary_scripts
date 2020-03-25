@@ -92,7 +92,7 @@ if __name__ == '__main__':
     elif platform.node().startswith("n"):
         # On a mox compute node: ready to run
         print("script submitted")
-        output("GG",[10,20,30])
+        run_all()
     else:
         output(6)
 
