@@ -50,7 +50,7 @@ def phase_temp(pair):
     h2o_final = []
     ch4_final = []
     n2o_final = []
-    ch3cl = []
+    ch3cl_final = []
     block_length = 128
     skip_lines = 7
 
@@ -70,7 +70,7 @@ def phase_temp(pair):
         o3_final.append(float(O3))
         co2_final.append(float(CO2))
         o2_final.append(float(O2))
-        h2o_final.append(float(h2o))
+        h2o_final.append(float(H2O))
         ch4_final.append(float(CH4))
         n2o_final.append(float(N2O))
         ch3cl_final.append(float(CH3Cl))
