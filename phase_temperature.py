@@ -50,7 +50,7 @@ def phase_temp(pair):
     h2o_final = []
     ch4_final = []
     n2o_final = []
-    ch3cl = []
+    ch3cl_final = []
     block_length = 128
     skip_lines = 7
 
@@ -70,7 +70,7 @@ def phase_temp(pair):
         o3_final.append(float(O3))
         co2_final.append(float(CO2))
         o2_final.append(float(O2))
-        h2o_final.append(float(h2o))
+        h2o_final.append(float(H2O))
         ch4_final.append(float(CH4))
         n2o_final.append(float(N2O))
         ch3cl_final.append(float(CH3Cl))
@@ -81,20 +81,21 @@ def phase_temp(pair):
     matplotlib.rcParams['font.size'] = 15.0
     matplotlib.rc('text', usetex=False)
     plt.switch_backend('agg')
-    fig, ax = plt.subplots(figsize = (10,10))
-    
-    ax.plot(range(len(o3_final)), o3_final, label = "O3")
-    ax.plot(range(len(co2_final)), co2_final, label = "CO2")
-    ax.plot(range(len(o2_final)), o2_final, label = "O2")
-    ax.plot(range(len(h2o_final)), h2o_final, label = "H2O")
-    ax.plot(range(len(ch4_final)), ch4_final, label = "CH4")
-    ax.plot(range(len(n2o_final)), n2o_final, label = "N2O")
-    ax.plot(range(len(ch3cl_final)), ch3cl_final, label = "CH3Cl")
+    fig, ax = plt.subplots(8,1,figsize = (15,24))
+    ax[0].plot(range(len(t_final)), t_final, label = "Temp")
+    ax[1].plot(range(len(o3_final)), o3_final, label = "O3")
+    ax[2].plot(range(len(co2_final)), co2_final, label = "CO2")
+    ax[3].plot(range(len(o2_final)), o2_final, label = "O2")
+    ax[4].plot(range(len(h2o_final)), h2o_final, label = "H2O")
+    ax[5].plot(range(len(ch4_final)), ch4_final, label = "CH4")
+    ax[6].plot(range(len(n2o_final)), n2o_final, label = "N2O")
+    ax[7].plot(range(len(ch3cl_final)), ch3cl_final, label = "CH3Cl")
     ax.legend()
-    ax.set_xlabel("Time stamp")
-    ax.set_ylabel("Gas abundance")
-    ax2 = ax.twinx()
-    ax2.plot(range(len(t_final)), t_final, label = "Temp")
+    for i < 6:
+        ax[i].set_xlabel("Time stamp")
+        ax[i].set_ylabel("Gas abundance")
+        ax[i].legend()
+
     ax2.set_ylabel("Surface Temperature")
     fig.savefig("/gscratch/vsm/mwjl/projects/binary/plots/phase_temp" + str(pair)+ ".png", bbox_inches = "tight")
 
