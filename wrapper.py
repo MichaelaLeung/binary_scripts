@@ -44,14 +44,17 @@ def run_csv_conversion(pair):
 def run_multiflare(pair):
     os.chdir("/gscratch/vsm/mwjl/projects/binary/multiflare")
     if pair == "GG":
+        subprocess.call(["make"])
         subprocess.call(["./recover"], shell = True)
         copyfile("input_ggbin", "input")
         subprocess.call(["./circumbinary"], shell = True)
     elif pair == "GK":
+        subprocess.call(["make"])
         subprocess.call(["./recover"], shell = True)
         copyfile("input_gkbin", "input")
         subprocess.call(["./circumbinary"], shell = True)
     elif pair == "GM":
+        subprocess.call(["make"])
         subprocess.call(["./recover"], shell = True)
         copyfile("input_gmbin", "input")
         subprocess.call(["./circumbinary"], shell = True)      
@@ -138,8 +141,8 @@ if __name__ == '__main__':
         # On a mox compute node: ready to run
         prelim_run()
 #        run_multiflare('GG')
-#        num = range(1,40000,10000)
-#        run_all("GG", num)
+        num = range(1,20000,100)
+        run_plots_multi(num, "GM")
 #        run_all_smart("GM", num)
     else:
         run_all("GG", 5)

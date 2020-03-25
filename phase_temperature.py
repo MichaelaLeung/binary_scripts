@@ -49,12 +49,12 @@ def phase_temp(pair):
 
     i = 0
 
-    while i < len(star2): 
+    while i < 30500: 
         temp = np.genfromtxt(infile, skip_header = (1 + (block_length + skip_lines)*(i-1)), max_rows = block_length)
         T = temp[-1:,1]
         t_final.append(float(T))
         print(T,i)
-        i = i+10
+        i = i+100
         
     matplotlib.rc('font',**{'family':'serif','serif':['Computer Modern']})
     matplotlib.rcParams['font.size'] = 15.0
@@ -87,6 +87,6 @@ if __name__ == '__main__':
                                rm_after_submit = True)
     elif platform.node().startswith("n"):
         # On a mox compute node: ready to run
-        phase_temp('GM')
+        phase_temp('GG')
     else:
         phase_temp()

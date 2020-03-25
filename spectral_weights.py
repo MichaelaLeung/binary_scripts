@@ -67,7 +67,7 @@ def smart_spectral(pair,i):
     place = '/gscratch/vsm/mwjl/projects/binary/scripts/smart/'
     infile = '/gscratch/vsm/mwjl/projects/binary/multiflare/io/spectra_info.dat'
     res = 0.01
-    lamin = 0.10
+    lamin = 0.20
     lamax = 0.40
 
     #setting up constants
