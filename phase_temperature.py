@@ -56,7 +56,7 @@ def phase_temp(pair):
 
     i = 0
 
-    while i < 30500: 
+    while i < 100000: 
         temp = np.genfromtxt(infile, skip_header = (1 + (block_length + skip_lines)*(i-1)), max_rows = block_length)
         T = temp[-1:,1]
         O3 = temp[-1,2]
@@ -74,14 +74,14 @@ def phase_temp(pair):
         ch4_final.append(float(CH4))
         n2o_final.append(float(N2O))
         ch3cl_final.append(float(CH3Cl))
-        print(T,i)
+        print(i)
         i = i+100
         
     matplotlib.rc('font',**{'family':'serif','serif':['Computer Modern']})
     matplotlib.rcParams['font.size'] = 15.0
     matplotlib.rc('text', usetex=False)
     plt.switch_backend('agg')
-    fig, ax = plt.subplots(8,1,figsize = (15,24))
+    fig, ax = plt.subplots(8,1,figsize = (15,32))
     ax[0].plot(range(len(t_final)), t_final, label = "Temp")
     ax[1].plot(range(len(o3_final)), o3_final, label = "O3")
     ax[2].plot(range(len(co2_final)), co2_final, label = "CO2")
@@ -90,13 +90,15 @@ def phase_temp(pair):
     ax[5].plot(range(len(ch4_final)), ch4_final, label = "CH4")
     ax[6].plot(range(len(n2o_final)), n2o_final, label = "N2O")
     ax[7].plot(range(len(ch3cl_final)), ch3cl_final, label = "CH3Cl")
-    ax.legend()
-    for i < 6:
+    ax[0].set_xlabel("Time stamp")
+    ax[0].set_ylabel("Temperature (K)")
+
+    i = 1
+    while i <= 7:
         ax[i].set_xlabel("Time stamp")
         ax[i].set_ylabel("Gas abundance")
         ax[i].legend()
-
-    ax2.set_ylabel("Surface Temperature")
+        i = i+1
     fig.savefig("/gscratch/vsm/mwjl/projects/binary/plots/phase_temp" + str(pair)+ ".png", bbox_inches = "tight")
 
 
