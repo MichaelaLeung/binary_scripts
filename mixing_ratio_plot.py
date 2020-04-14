@@ -17,17 +17,18 @@ def plot_mixingratios(infile, i, pair):
     skip_lines = 7
     i = int(i)
     #getting molecule names from input file
-    with open(infile) as f:
-        first_line = f.readline()
-    mol_names = []
-    first_line = first_line.strip('\n') 
-    first_line = first_line.split(" ")
-    for j in first_line: 
-        if j != '':
-            mol_names.append(j)
-    mol_names = mol_names[2:]
+#    with open(infile) as f:
+#        first_line = f.readline()
+#    mol_names = []
+#    first_line = first_line.strip('\n') 
+#    first_line = first_line.split(" ")
+#    for j in first_line: 
+#        if j != '':
+#            mol_names.append(j)
+#    mol_names = mol_names[2:]
     #finding the correct block in the long output file
-    temp = np.genfromtxt(infile, skip_header = (1 + (block_length + skip_lines)*(i-1)), max_rows = block_length)
+    temp = np.genfromtxt(infile, skip_header = (7 + (block_length + skip_lines)*(i)), max_rows = block_length)
+#    print(temp)
     #separating out the gases, P and T
     gases = temp[:,2:]
     P = temp[:,0]
@@ -44,12 +45,18 @@ def plot_mixingratios(infile, i, pair):
 
     fig, ax = plt.subplots(figsize=(9,9))
     ax.plot(0,0,color="black", label="Temp.", ls="--")
+    mol_names = temp[7,2:]
+    print(mol_names)
+    mol_names = np.split(mol_names,7)
+    print(len(mol_names))
+    mol_names_str = "O3", "CO2", "O2", "H2O", "CH4", "N2O", "CH3Cl"
     for k in range(len(mol_names)):
-        ax.plot(gases[:,k], P, label=mol_names[k])
+        print(gases[:,k], i)
+        ax.plot(gases[:,k], P, label=mol_names_str[k])
     ax.set_xlabel("Volume Mixing Ratio")
     ax.set_ylabel("Pressure [Pa]")
     ax.set_xlim(10**(-15),1)
-    ax.set_ylim(10**5,10)   
+    ax.set_ylim(10**5,30)   
     ax.loglog()
     ax.legend()
 
@@ -64,7 +71,8 @@ def plot_mixingratios(infile, i, pair):
 
 def run_plots(values, pair):
     for i in values:
-        plot_mixingratios("/gscratch/vsm/mwjl/projects/binary/multiflare/io/spectra_info.dat",i, pair)
+        plot_mixingratios("/gscratch/vsm/mwjl/projects/binary/multiflare/io/spectra_info_4114GG.dat",i, pair)
+        print(i)
 #        plot_mixingratios("/gscratch/vsm/mwjl/projects/binary/spectra_info.dat", i, pair) 
        #temp = "/gscratch/vsm/mwjl/projects/binary/plots/"+str(i)+str(pair)+".png"
         #inputs.append(temp)
@@ -115,9 +123,9 @@ if __name__ == '__main__':
                                rm_after_submit = True)
     elif platform.node().startswith("n"):
         # On a mox compute node: ready to run
-        num = range(1,45000,100)
-        run_plots(num, "GM")
-        gif_only(num, "GM")    
+        num = range(1,100000,1000)
+        run_plots(num, "GG")
+#        gif_only(num, "GG")    
 #run_plots(num, "GM")
 #        run_plots(num, "GG")
     else:

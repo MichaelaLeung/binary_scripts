@@ -42,7 +42,7 @@ def phase_temp(pair):
         t_star.append(temp3)
     print("time conversion")
 
-    infile = "/gscratch/vsm/mwjl/projects/binary/multiflare/io/spectra_info.dat"
+    infile = "/gscratch/vsm/mwjl/projects/binary/multiflare/io/spectra_info_4114GG.dat"
     t_final = []
     o3_final = []
     co2_final = []
@@ -57,7 +57,9 @@ def phase_temp(pair):
     i = 0
 
     while i < 100000: 
-        temp = np.genfromtxt(infile, skip_header = (1 + (block_length + skip_lines)*(i-1)), max_rows = block_length)
+        print(((7 + (block_length + skip_lines)*(i-1))))
+        temp = np.genfromtxt(infile, skip_header = (7 + (block_length + skip_lines)*(i)), max_rows = block_length)
+        print(i, np.shape(temp))
         T = temp[-1:,1]
         O3 = temp[-1,2]
         CO2 = temp[-1,3]
@@ -90,12 +92,12 @@ def phase_temp(pair):
     ax[5].plot(range(len(ch4_final)), ch4_final, label = "CH4")
     ax[6].plot(range(len(n2o_final)), n2o_final, label = "N2O")
     ax[7].plot(range(len(ch3cl_final)), ch3cl_final, label = "CH3Cl")
-    ax[0].set_xlabel("Time stamp")
+    ax[0].set_xlabel("Time [days]")
     ax[0].set_ylabel("Temperature (K)")
 
     i = 1
     while i <= 7:
-        ax[i].set_xlabel("Time stamp")
+        ax[i].set_xlabel("Time [days]")
         ax[i].set_ylabel("Gas abundance")
         ax[i].legend()
         i = i+1
@@ -125,40 +127,37 @@ def phase_temp_conly(pair):
     t_star_temp = range(len(star1))
     for i in t_star_temp: 
         temp3 = float(i)
-        temp3 = temp3 *0.01 
         t_star.append(temp3)
     print("time conversion")
 
-    infile = "/gscratch/vsm/mwjl/projects/binary/multiflare/io/spectra_info.dat"
+    infile = "/gscratch/vsm/mwjl/projects/binary/multiflare/io/spectra_info_4619GG.dat"
     t_final = []
     o3_final = []
     co2_final = []
     o2_final = []
     h2o_final = []
     ch4_final = []
-    block_length = 128
-    skip_lines = 7
+    block_length = 52
+    skip_lines = 1
 
     i = 0
 
-    while i < 100000: 
+    while i < 100:
         temp = np.genfromtxt(infile, skip_header = (1 + (block_length + skip_lines)*(i-1)), max_rows = block_length)
         T = temp[-1:,1]
+        print(i, T)
         O3 = temp[-1,2]
         CO2 = temp[-1,3]
         O2 = temp[-1:,4]
         H2O = temp[-1,5]
         CH4 = temp[-1,6]
-        N2O = temp[-1,7]
-        CH3Cl = temp[-1,8]
         t_final.append(float(T))
         o3_final.append(float(O3))
         co2_final.append(float(CO2))
         o2_final.append(float(O2))
         h2o_final.append(float(H2O))
         ch4_final.append(float(CH4))
-        print(i)
-        i = i+100
+        i = i+1
         
     matplotlib.rc('font',**{'family':'serif','serif':['Computer Modern']})
     matplotlib.rcParams['font.size'] = 15.0
@@ -171,12 +170,12 @@ def phase_temp_conly(pair):
     ax[3].plot(range(len(o2_final)), o2_final, label = "O2")
     ax[4].plot(range(len(h2o_final)), h2o_final, label = "H2O")
     ax[5].plot(range(len(ch4_final)), ch4_final, label = "CH4")
-    ax[0].set_xlabel("Time stamp")
+    ax[0].set_xlabel("Time [days]")
     ax[0].set_ylabel("Temperature (K)")
 
     i = 1
     while i <= 5:
-        ax[i].set_xlabel("Time stamp")
+        ax[i].set_xlabel("Time [days]")
         ax[i].set_ylabel("Gas abundance")
         ax[i].legend()
         i = i+1
