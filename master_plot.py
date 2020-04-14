@@ -12,6 +12,7 @@ import matplotlib.pyplot as plt
 matplotlib.rcParams['text.usetex'] = False 
 import csv
 import imageio
+import smart
 
 def phase_temp(infile, pair):
     print('pt start') 
@@ -76,6 +77,8 @@ def phase_temp(infile, pair):
         print(i)
         i = i+100
         
+
+        
     matplotlib.rc('font',**{'family':'serif','serif':['Computer Modern']})
     matplotlib.rcParams['font.size'] = 15.0
     matplotlib.rc('text', usetex=False)
@@ -91,6 +94,11 @@ def phase_temp(infile, pair):
     ax[7].plot(range(len(ch3cl_final)), ch3cl_final, label = "CH3Cl")
     ax[0].set_xlabel("Time [days]")
     ax[0].set_ylabel("Temperature (K)")
+    
+    temp_avg = np.mean(t_final)
+    f = open('avgs.txt', 'a')
+    f.write(temp_avg)
+    f.close()
 
     i = 1
     while i <= 7:
@@ -101,7 +109,6 @@ def phase_temp(infile, pair):
     fig.savefig("/gscratch/vsm/mwjl/projects/binary/plots/phase_temp_both" + str(pair)+ ".png", bbox_inches = "tight")
 
 def phase_temp_conly(infile, pair):
-    print('pt start') 
     data = []
     with open("/gscratch/vsm/mwjl/projects/binary/twostars" + str(pair)+ "/twostars3_out_general.csv") as csvfile:
         readCSV = csv.reader(csvfile, delimiter=',')
@@ -168,7 +175,11 @@ def phase_temp_conly(infile, pair):
     ax[5].plot(range(len(ch4_final)), ch4_final, label = "CH4")
     ax[0].set_xlabel("Time [days]")
     ax[0].set_ylabel("Temperature (K)")
-    temp_avg = mean(t_final)
+   
+    temp_avg = np.mean(t_final)
+    f = open('avgs.txt', 'a')
+    f.write(temp_avg)
+    f.close()
     
     i = 1
     while i <= 5:
@@ -301,3 +312,29 @@ def run_plots(infile, values, coupled):
     else: 
         phase_temp_conly(infile, pair)
         plot_o3(infile, pair)
+
+if __name__ == '__main__':
+
+    import platform
+
+    if platform.node().startswith("mox"):
+        # On the mox login node: submit job
+        runfile = __file__
+        smart.utils.write_slurm_script_python(runfile,
+                               name="allplt",
+                               subname="submit.csh",
+                               workdir = "",
+                               nodes = 1,
+                               mem = "500G",
+                               walltime = "72:00:00",
+                               ntasks = 28,
+                               account = "vsm",
+                               submit = True,
+                               rm_after_submit = True)
+    elif platform.node().startswith("n"):
+        # On a mox compute node: ready to run
+        values = np.linspace(1, 100000,100)
+        run_plots("4114GG", values, True)
+    else:
+        phase_temp()
+
