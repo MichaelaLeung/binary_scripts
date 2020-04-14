@@ -168,7 +168,8 @@ def phase_temp_conly(infile, pair):
     ax[5].plot(range(len(ch4_final)), ch4_final, label = "CH4")
     ax[0].set_xlabel("Time [days]")
     ax[0].set_ylabel("Temperature (K)")
-
+    temp_avg = mean(t_final)
+    
     i = 1
     while i <= 5:
         ax[i].set_xlabel("Time [days]")
