@@ -15,7 +15,6 @@ import imageio
 import smart
 
 def phase_temp(infile, pair):
-    print('pt start') 
     data = []
     with open("/gscratch/vsm/mwjl/projects/binary/twostars" + str(pair)+ "/twostars3_out_general.csv") as csvfile:
         readCSV = csv.reader(csvfile, delimiter=',')
@@ -31,7 +30,6 @@ def phase_temp(infile, pair):
         temp2 = line[1]
         temp2 = temp2.strip(" ")
         star2.append(float(temp2))
-    print("arrays")
 
     t_star = [] # converting timescale to days
     t_star_temp = range(len(star1))
@@ -39,8 +37,8 @@ def phase_temp(infile, pair):
         temp3 = float(i)
         temp3 = temp3 *0.01 
         t_star.append(temp3)
-    print("time conversion")
-
+    
+    t_star = t_star[3000:]
     t_final = []
     o3_final = []
     co2_final = []
@@ -52,12 +50,10 @@ def phase_temp(infile, pair):
     block_length = 128
     skip_lines = 7
 
-    i = 0
+    i = 3000
 
     while i < 100000: 
-        print(((7 + (block_length + skip_lines)*(i-1))))
         temp = np.genfromtxt(infile, skip_header = (7 + (block_length + skip_lines)*(i)), max_rows = block_length)
-        print(i, np.shape(temp))
         T = temp[-1:,1]
         O3 = temp[-1,2]
         CO2 = temp[-1,3]
@@ -74,7 +70,6 @@ def phase_temp(infile, pair):
         ch4_final.append(float(CH4))
         n2o_final.append(float(N2O))
         ch3cl_final.append(float(CH3Cl))
-        print(i)
         i = i+100
         
 
@@ -96,8 +91,9 @@ def phase_temp(infile, pair):
     ax[0].set_ylabel("Temperature (K)")
     
     temp_avg = np.mean(t_final)
-    f = open('avgs.txt', 'a')
-    f.write(temp_avg)
+    f = open('avgs.txt', 'w')
+    out = str(temp_avg) + '\n'
+    f.write(str(out))
     f.close()
 
     i = 1
@@ -114,7 +110,6 @@ def phase_temp_conly(infile, pair):
         readCSV = csv.reader(csvfile, delimiter=',')
         for row in readCSV:
             data.append(row[3:5])
-        print("csv")
     data = data[1:]
     star1 = []
     star2 = []
@@ -125,14 +120,12 @@ def phase_temp_conly(infile, pair):
         temp2 = line[1]
         temp2 = temp2.strip(" ")
         star2.append(float(temp2))
-    print("arrays")
 
     t_star = [] # converting timescale to days
     t_star_temp = range(len(star1))
     for i in t_star_temp: 
         temp3 = float(i)
         t_star.append(temp3)
-    print("time conversion")
 
     t_final = []
     o3_final = []
@@ -143,12 +136,11 @@ def phase_temp_conly(infile, pair):
     block_length = 52
     skip_lines = 1
 
-    i = 0
+    i = 200
 
-    while i < 100:
+    while i < 9000:
         temp = np.genfromtxt(infile, skip_header = (1 + (block_length + skip_lines)*(i-1)), max_rows = block_length)
         T = temp[-1:,1]
-        print(i, T)
         O3 = temp[-1,2]
         CO2 = temp[-1,3]
         O2 = temp[-1:,4]
@@ -178,7 +170,8 @@ def phase_temp_conly(infile, pair):
    
     temp_avg = np.mean(t_final)
     f = open('avgs.txt', 'a')
-    f.write(temp_avg)
+    out = str(temp_avg) + '\n'
+    f.write(str(out))
     f.close()
     
     i = 1
@@ -194,9 +187,14 @@ def plot_mixingratios(infile, i, pair, coupled):
     block_length = 128
     skip_lines = 7
     i = int(i)
-    temp = np.genfromtxt(infile, skip_header = (7 + (block_length + skip_lines)*(i)), max_rows = block_length)
+    if coupled == False: 
+        skip_lines = 1
+        block_length = 52
+    print(skip_lines, block_length)
+    temp = np.genfromtxt(infile, skip_header = (skip_lines + (block_length + skip_lines)*(i)), max_rows = block_length)
     #separating out the gases, P and T
     gases = temp[:,2:]
+    #print(gases)
     P = temp[:,0]
     T = temp[:,1]
     T2 = []
@@ -211,18 +209,17 @@ def plot_mixingratios(infile, i, pair, coupled):
 
     fig, ax = plt.subplots(figsize=(9,9))
     ax.plot(0,0,color="black", label="Temp.", ls="--")
-    mol_names = temp[7,2:]
     if coupled == True: 
        mol_names_str = "O3", "CO2", "O2", "H2O", "CH4", "N2O", "CH3Cl"
     else: 
            mol_names_str = "O3", "CO2", "O2", "H2O", "CH4"
-    for k in range(len(mol_names)):
-        print(gases[:,k], i)
+    for k in range(len(mol_names_str)):
+        print(gases[:,k], P, mol_names_str[k])
         ax.plot(gases[:,k], P, label=mol_names_str[k])
     ax.set_xlabel("Volume Mixing Ratio")
     ax.set_ylabel("Pressure [Pa]")
-    ax.set_xlim(10**(-15),1)
-    ax.set_ylim(10**5,30)   
+#    ax.set_xlim(10**(-15),1)
+#    ax.set_ylim(10**5,30)   
     ax.loglog()
     ax.legend()
 
@@ -233,7 +230,6 @@ def plot_mixingratios(infile, i, pair, coupled):
     axT.plot(T2, P, color="black", label="Temperature", ls="--")
     fig_name = "/gscratch/vsm/mwjl/projects/binary/plots/" + str(i) + str(pair) + ".png"
     fig.savefig(fig_name, bbox_inches = "tight")
-    return(fig_name)
             
 def plot_o3(infile, pair):
     file = np.genfromtxt(infile, skip_header = 1)
@@ -289,8 +285,9 @@ def plot_o3(infile, pair):
     fig.savefig("/gscratch/vsm/mwjl/projects/binary/plots/" + str(pair)+"o3plot.png", bbox_inches = 'tight')
 
 
-def run_plots(infile, values, coupled):
-    pair = infile[-2:-1]
+def run_plots(inf, values, coupled):
+    infile = '/gscratch/vsm/mwjl/projects/binary/multiflare/io/spectra_info_'+str(inf)+'.dat'
+    pair = inf[-2:]
     for i in values:
         plot_mixingratios(infile,i, pair, coupled)
         print(i)
@@ -333,8 +330,9 @@ if __name__ == '__main__':
                                rm_after_submit = True)
     elif platform.node().startswith("n"):
         # On a mox compute node: ready to run
-        values = np.linspace(1, 100000,100)
-        run_plots("4114GG", values, True)
+        values = range(1, 9000,100)
+        run_plots("41511GG", values, False)
+        #plot_mixingratios('/gscratch/vsm/mwjl/projects/binary/multiflare/io/spectra_info_41412GG.dat', 5, 'GG', False)
     else:
         phase_temp()
 
