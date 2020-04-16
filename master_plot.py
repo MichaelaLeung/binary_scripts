@@ -331,7 +331,7 @@ if __name__ == '__main__':
     elif platform.node().startswith("n"):
         # On a mox compute node: ready to run
         values = range(1, 9000,100)
-        run_plots("41511GG", values, False)
+        run_plots("41513GG", values, False)
         #plot_mixingratios('/gscratch/vsm/mwjl/projects/binary/multiflare/io/spectra_info_41412GG.dat', 5, 'GG', False)
     else:
         phase_temp()
