@@ -38,7 +38,7 @@ def phase_temp(infile, pair):
         temp3 = temp3 *0.01 
         t_star.append(temp3)
     
-    t_star = t_star[3000:]
+    t_star = t_star
     t_final = []
     o3_final = []
     co2_final = []
@@ -283,7 +283,58 @@ def plot_o3(infile, pair):
     ax[1].set_xlabel('Time (days)')
 
     fig.savefig("/gscratch/vsm/mwjl/projects/binary/plots/" + str(pair)+"o3plot.png", bbox_inches = 'tight')
+    
+def plot_ptt(infile, pair, coupled):
+    #plots phase, tst and temperature 
+    solint = np.genfromtxt('/gscratch/vsm/mwjl/projects/binary/multiflare/io/solint.pdat')
+    block_length = 128
+    skip_lines = 7
+    t_final = []
+    data = []
+    if coupled == False: 
+        skip_lines = 1
+        block_length = 52
+    print(skip_lines, block_length)
+    i = 0
+    while i < len(solint): 
+        temp = np.genfromtxt(infile, skip_header = (skip_lines + (block_length + skip_lines)*(i)), max_rows = block_length)
+        T = temp[-1:,1]
+        t_final.append(float(T))
+        i = i+1
+    if pair == "GG":
+        csv_path = "/gscratch/vsm/mwjl/projects/binary/twostarsGG/twostars3_out_general.csv"
+    elif pair == "GK":
+        csv_path = '/gscratch/vsm/mwjl/projects/binary/twostarsGM/twostars3_out_general.csv'
+    elif pair == "GM":
+        csv_path = '/gscratch/vsm/mwjl/projects/binary/twostarsGK/twostars3_out_general.csv'        
+    with open(csv_path) as csvfile:
+        readCSV = csv.reader(csvfile, delimiter=',')
+        for row in readCSV:
+            data.append(row[3:5])
+    data = data[1:]
+    star1 = []
+    star2 = []
 
+    for line in data: 
+        temp = line[0]
+        temp = temp.strip(" ")
+        star1.append(float(temp))
+        temp1 = line[1]
+        temp1 = temp1.strip(" ")
+        star2.append(float(temp1))
+    
+    t_star_final = []
+    t_star = range(len(star1))
+    for i in t_star: 
+        t_star_final.append(i*1/100)
+    fig, ax = plt.plot(sfigsize = (100,10))
+    ax.plt(solint)
+    ax.plt(t_final)
+    ax.plt(star1)
+    ax.plt(star2)
+    fig.savefig("ptt_test.png")
+    
+    
 
 def run_plots(inf, values, coupled):
     infile = '/gscratch/vsm/mwjl/projects/binary/multiflare/io/spectra_info_'+str(inf)+'.dat'
