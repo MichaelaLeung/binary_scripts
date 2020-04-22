@@ -65,14 +65,14 @@ def spec_out(pair):
 
 def smart_spectral(pair,i):
     place = '/gscratch/vsm/mwjl/projects/binary/scripts/smart/'
-    infile = '/gscratch/vsm/mwjl/projects/binary/multiflare/io/spectra_info.dat'
+    infile = '/gscratch/vsm/mwjl/projects/binary/multiflare/io/spectra_info_42019GG.dat'
     res = 0.01
     lamin = 0.20
     lamax = 0.40
 
     #setting up constants
-    block_length = 128
-    skip_lines = 7
+    block_length = 52
+    skip_lines = 1
     i = int(i)
     #getting molecule names from input file
     with open(infile) as f:
@@ -85,7 +85,7 @@ def smart_spectral(pair,i):
             mol_names_full.append(j)
     mol_names = mol_names_full[2:]
     #finding the correct block in the long output file
-    temp = np.genfromtxt(infile, skip_header = (1 + (block_length + skip_lines)*(i-1)), max_rows = block_length)
+    temp = np.genfromtxt(infile, skip_header = (1 + (block_length + skip_lines)*(i)), max_rows = block_length)
     #separating out the gases, P and T
     gases = temp[:,2:]
     P = temp[:,0]
@@ -159,21 +159,21 @@ def smart_spectral_integ(pair,band,i, res):
         lamin = 0.18
         lamax = 0.28
         
-    infile = '/gscratch/vsm/mwjl/projects/binary/multiflare/io/spectra_info.dat'
+    infile = '/gscratch/vsm/mwjl/projects/binary/multiflare/io/spectra_info_42019GG.dat'
 
     #setting up constants
-    block_length = 128
-    skip_lines = 7
+    block_length = 52
+    skip_lines = 1
     i = int(i)
     #getting molecule names from input file
-    with open(infile) as f:
-        first_line = f.readline()
-    mol_names_full = []
-    first_line2 = first_line.strip('\n')
-    first_line2 = first_line2.split(" ")
-    for j in first_line2:
-        if j != '':
-            mol_names_full.append(j)
+#    with open(infile) as f:
+#        first_line = f.readline()
+#    mol_names_full = []
+#    first_line2 = first_line.strip('\n')
+#    first_line2 = first_line2.split(" ")
+#    for j in first_line2:
+#        if j != '':
+#            mol_names_full.append(j)
     mol_names = mol_names_full[2:]
     #finding the correct block in the long output file
     temp = np.genfromtxt(infile, skip_header = (1 + (block_length + skip_lines)*(i-1)), max_rows = block_length)
