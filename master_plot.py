@@ -409,7 +409,7 @@ if __name__ == '__main__':
 #        phase_temp('/gscratch/vsm/mwjl/projects/binary/multiflare/io/spectra_info_42221GG.dat', 'GG')
         values = range(1, 9000,100)
 #        run_plots("42221GG", v1, True)
-        out_list = [
+        out_list = ["43017GG", True], ["5110GG", False], ["518GM", True], ["5110GM", False]
         for a,b in out_list: 
             run_plots(a, values, b)
 #        run_plots("42320GM", v1, True)
