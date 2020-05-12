@@ -14,8 +14,9 @@ import csv
 import imageio
 import smart
 from o3_plot import plot_o3
-def phase_temp(infile, pair):
+def phase_temp(inf, pair):
     data = []
+    infile = '/gscratch/vsm/mwjl/projects/binary/multiflare/io/spectra_info_'+str(inf)+'.dat'
     with open("/gscratch/vsm/mwjl/projects/binary/twostars" + str(pair)+ "/twostars3_out_general.csv") as csvfile:
         readCSV = csv.reader(csvfile, delimiter=',')
         for row in readCSV:
@@ -91,7 +92,7 @@ def phase_temp(infile, pair):
     ax[0].set_xlabel("Time [days]")
     ax[0].set_ylabel("Temperature (K)")
 
-    file = np.genfromtxt("/gscratch/vsm/mwjl/projects/binary/multiflare/io/"+inf, skip_header = 8001)
+    file = np.genfromtxt("/gscratch/vsm/mwjl/projects/binary/multiflare/io/o3coldepth"+str(inf) + '.dat", skip_header = 8001)
     data = []
     if pair == "GG":
         csv_path = "/gscratch/vsm/mwjl/projects/binary/twostarsGG/twostars3_out_general.csv"
@@ -103,11 +104,9 @@ def phase_temp(infile, pair):
         readCSV = csv.reader(csvfile, delimiter=',')
         for row in readCSV:
             data.append(row[3:5])
-#    data = data[8001:]
-#    solint = np.genfromtxt('/gscratch/vsm/mwjl/projects/binary/multiflare/io/solint_43017GG.pdat', skip_header=1000)
+    solint = np.genfromtxt('/gscratch/vsm/mwjl/projects/binary/multiflare/io/solint_' + str(inf)+'pdat', skip_header=1000)
     o3 = []
     for line2 in file: 
-  #      time.append(float(line2[1])/84600)  # original units are in seconds 
         o3.append(float(line2[3]))
     time2 = np.linspace(0,2500, len(o3))
     ax[1].plot(time2,o3)
@@ -122,22 +121,18 @@ def phase_temp(infile, pair):
     f.write(str(out))
     f.close()
 
-#    ax[0].set_title("Temperature")
-#    ax[1].set_title("Ozone") 
-#    ax[2].set_title("Water") 
 
-#    ax[1].set_ylabel("Gas abundance (ppb)")
     ax[2].set_ylabel("Gas abundance (ppm)")
     i = 2
     while i <= 2:
         ax[i].set_xlabel("Time [days]")
-   #     ax[i].set_ylabel("Gas abundance")
-#        ax[i].legend()
         i = i+1
     fig.savefig("/gscratch/vsm/mwjl/projects/binary/plots/phase_temp_both" + str(pair)+ "_long.png", bbox_inches = "tight")
 
-def phase_temp_conly(infile, pair):
+def phase_temp_conly(inf, pair):
     data = []
+    infile = '/gscratch/vsm/mwjl/projects/binary/multiflare/io/spectra_info_'+str(inf)+'.dat'
+
     with open("/gscratch/vsm/mwjl/projects/binary/twostars" + str(pair)+ "/twostars3_out_general.csv") as csvfile:
         readCSV = csv.reader(csvfile, delimiter=',')
         for row in readCSV:
@@ -203,7 +198,7 @@ def phase_temp_conly(infile, pair):
     ax[0].set_xlabel("Time [days]")
     ax[0].set_ylabel("Temperature (K)")
 
-    file = np.genfromtxt("/gscratch/vsm/mwjl/projects/binary/multiflare/io/o3coldepth5110GG.dat", skip_header = 1)
+    file = np.genfromtxt("/gscratch/vsm/mwjl/projects/binary/multiflare/io/o3coldepth" + str(inf) + ".dat", skip_header = 1)
     data = []
     if pair == "GG":
         csv_path = "/gscratch/vsm/mwjl/projects/binary/twostarsGG/twostars3_out_general.csv"
@@ -358,7 +353,7 @@ def plot_o3(infile, pair):
     
 def plot_ptt(inf, coupled):
     #plots phase, tst and temperature 
-    solint = np.genfromtxt('/gscratch/vsm/mwjl/projects/binary/multiflare/io/solint_41616GG.pdat')
+    solint = np.genfromtxt('/gscratch/vsm/mwjl/projects/binary/multiflare/io/solint_' + str(inf) + '.pdat')
     block_length = 128
     skip_lines = 7
     infile = '/gscratch/vsm/mwjl/projects/binary/multiflare/io/spectra_info_' + str(inf) + '.dat'
@@ -418,7 +413,7 @@ def run_plots(inf, values, coupled):
     infile = '/gscratch/vsm/mwjl/projects/binary/multiflare/io/spectra_info_'+str(inf)+'.dat'
     pair = inf[-2:]
     for i in values:
-        plot_mixingratios(infile,i, pair, coupled)
+        plot_mixingratios(inf,i, pair, coupled)
         print(i)
     gif_path = "/gscratch/vsm/mwjl/projects/binary/plots/" + str(pair) + ".gif"
     nums = values
