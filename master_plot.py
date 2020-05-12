@@ -13,7 +13,7 @@ matplotlib.rcParams['text.usetex'] = False
 import csv
 import imageio
 import smart
-
+from o3_plot import plot_o3
 def phase_temp(infile, pair):
     data = []
     with open("/gscratch/vsm/mwjl/projects/binary/twostars" + str(pair)+ "/twostars3_out_general.csv") as csvfile:
@@ -37,7 +37,7 @@ def phase_temp(infile, pair):
         temp3 = float(i)
         temp3 = temp3 *0.1 
         t_star.append(temp3)
-    t_star = t_star[3000:9000]
+    t_star = t_star[10000:]
     t_star = t_star
     t_final = []
     o3_final = []
@@ -50,9 +50,9 @@ def phase_temp(infile, pair):
     block_length = 128
     skip_lines = 7
 
-    i = 3000
+    i = 7000
 
-    while i < 9000: 
+    while i < 9500: 
         temp = np.genfromtxt(infile, skip_header = (1 + (block_length + skip_lines)*(i-1)), max_rows = block_length)
 #        print(1+(block_length+ skip_lines)*(i-1))
         T = temp[-1:,1]
@@ -72,22 +72,49 @@ def phase_temp(infile, pair):
         n2o_final.append(float(N2O))
         ch3cl_final.append(float(CH3Cl))
         i = i+1
-        
+    time = np.array(range(len(t_final)))        
+    print("gases created") 
+
     matplotlib.rc('font',**{'family':'serif','serif':['Computer Modern']})
     matplotlib.rcParams['font.size'] = 28.0
     matplotlib.rc('text', usetex=False)
     plt.switch_backend('agg')
     fig, ax = plt.subplots(3,1,figsize = (15,32))
-    ax[0].plot(t_star, t_final, label = "Temp")
-    ax[1].plot(t_star, o3_final, label = "O3")
+    ax[0].plot(time, t_final, label = "Temp")
+  #  ax[1].plot(time, o3_final, label = "O3")
    # ax[2].plot(range(len(co2_final)), co2_final, label = "CO2")
    # ax[3].plot(range(len(o2_final)), o2_final, label = "O2")
-    ax[2].plot(t_star, h2o_final, label = "H2O")
-#    ax[3].plot(range(len(ch4_final)), ch4_final, label = "CH4")
+    ax[2].plot(time, h2o_final, label = "H2O")
+ #   ax[3].plot(range(len(ch4_final)), ch4_final, label = "CH4")
    # ax[4].plot(range(len(n2o_final)), n2o_final, label = "N2O")
    # ax[5].plot(range(len(ch3cl_final)), ch3cl_final, label = "CH3Cl")
     ax[0].set_xlabel("Time [days]")
     ax[0].set_ylabel("Temperature (K)")
+
+    file = np.genfromtxt("/gscratch/vsm/mwjl/projects/binary/multiflare/io/"+inf, skip_header = 8001)
+    data = []
+    if pair == "GG":
+        csv_path = "/gscratch/vsm/mwjl/projects/binary/twostarsGG/twostars3_out_general.csv"
+    elif pair == "GK":
+        csv_path = '/gscratch/vsm/mwjl/projects/binary/twostarsGM/twostars3_out_general.csv'
+    elif pair == "GM":
+        csv_path = '/gscratch/vsm/mwjl/projects/binary/twostarsGK/twostars3_out_general.csv'        
+    with open(csv_path) as csvfile:
+        readCSV = csv.reader(csvfile, delimiter=',')
+        for row in readCSV:
+            data.append(row[3:5])
+#    data = data[8001:]
+#    solint = np.genfromtxt('/gscratch/vsm/mwjl/projects/binary/multiflare/io/solint_43017GG.pdat', skip_header=1000)
+    o3 = []
+    for line2 in file: 
+  #      time.append(float(line2[1])/84600)  # original units are in seconds 
+        o3.append(float(line2[3]))
+    time2 = np.linspace(0,2500, len(o3))
+    ax[1].plot(time2,o3)
+
+    ax[1].set_ylabel('O3 column depth (cm$^{-2}$)')
+
+    ax[1].set_xlabel('Time [days]')
     
     temp_avg = np.mean(t_final)
     f = open('avgs.txt', 'w')
@@ -95,19 +122,19 @@ def phase_temp(infile, pair):
     f.write(str(out))
     f.close()
 
-    ax[0].set_title("Temperature")
-    ax[1].set_title("Ozone") 
-    ax[2].set_title("Water") 
+#    ax[0].set_title("Temperature")
+#    ax[1].set_title("Ozone") 
+#    ax[2].set_title("Water") 
 
-    ax[1].set_ylabel("Gas abundance (ppb)")
+#    ax[1].set_ylabel("Gas abundance (ppb)")
     ax[2].set_ylabel("Gas abundance (ppm)")
-    i = 1
+    i = 2
     while i <= 2:
         ax[i].set_xlabel("Time [days]")
    #     ax[i].set_ylabel("Gas abundance")
-        ax[i].legend()
+#        ax[i].legend()
         i = i+1
-    fig.savefig("/gscratch/vsm/mwjl/projects/binary/plots/phase_temp_both" + str(pair)+ ".png", bbox_inches = "tight")
+    fig.savefig("/gscratch/vsm/mwjl/projects/binary/plots/phase_temp_both" + str(pair)+ "_long.png", bbox_inches = "tight")
 
 def phase_temp_conly(infile, pair):
     data = []
@@ -132,7 +159,7 @@ def phase_temp_conly(infile, pair):
         temp3 = float(i) * 0.1
         temp3 = temp3 
         t_star.append(temp3)
-    t_star = t_star[3000:9000]
+    t_star = t_star[1000:]
  #   print(t_star)
     t_final = []
     o3_final = []
@@ -142,10 +169,11 @@ def phase_temp_conly(infile, pair):
     ch4_final = []
     block_length = 52
     skip_lines = 1
+    i = 1000
 
-    i = 3000
-
-    while i < 9000:
+    while i < 3500:
+        print(i)
+        print(1 + (block_length + skip_lines)*(i-1))
         temp = np.genfromtxt(infile, skip_header = (1 + (block_length + skip_lines)*(i-1)), max_rows = block_length)
         T = temp[-1:,1]
         O3 = temp[-1,2]
@@ -160,20 +188,46 @@ def phase_temp_conly(infile, pair):
         h2o_final.append(float(H2O)*10**6)
         ch4_final.append(float(CH4))
         i = i+1
-        
+    time = np.asarray(range(len(t_final))) * 100 
     matplotlib.rc('font',**{'family':'serif','serif':['Computer Modern']})
     matplotlib.rcParams['font.size'] = 28.0
     matplotlib.rc('text', usetex=False)
     plt.switch_backend('agg')
     fig, ax = plt.subplots(3,1,figsize = (15,32))
-    ax[0].plot(t_star, t_final, label = "Temp")
-    ax[1].plot(t_star, o3_final, label = "O3")
+    ax[0].plot(range(len(t_final)), t_final, label = "Temp")
+#    ax[1].plot(range(len(o3_final)), o3_final, label = "O3")
   #  ax[2].plot(t_star, co2_final, label = "CO2")
   #  ax[3].plot(t_star, o2_final, label = "O2")
-    ax[2].plot(t_star, h2o_final, label = "H2O")
+    ax[2].plot(range(len(h2o_final)), h2o_final, label = "H2O")
   #  ax[3].plot(t_star, ch4_final, label = "CH4")
     ax[0].set_xlabel("Time [days]")
     ax[0].set_ylabel("Temperature (K)")
+
+    file = np.genfromtxt("/gscratch/vsm/mwjl/projects/binary/multiflare/io/o3coldepth5110GG.dat", skip_header = 1)
+    data = []
+    if pair == "GG":
+        csv_path = "/gscratch/vsm/mwjl/projects/binary/twostarsGG/twostars3_out_general.csv"
+    elif pair == "GK":
+        csv_path = '/gscratch/vsm/mwjl/projects/binary/twostarsGM/twostars3_out_general.csv'
+    elif pair == "GM":
+        csv_path = '/gscratch/vsm/mwjl/projects/binary/twostarsGK/twostars3_out_general.csv'
+    with open(csv_path) as csvfile:
+        readCSV = csv.reader(csvfile, delimiter=',')
+        for row in readCSV:
+            data.append(row[3:5])
+    data = data[1001:]
+#    solint = np.genfromtxt('/gscratch/vsm/mwjl/projects/binary/multiflare/io/solint_43017GG.pdat', skip_header=1000)
+    o3 = []
+    for line2 in file:
+  #	 time.append(float(line2[1])/84600)  # original units are in seconds
+        o3.append(float(line2[3]))
+    time2 = np.linspace(0,3500, len(o3))
+    ax[1].plot(time2,o3)
+
+    ax[1].set_ylabel('O3 column depth (cm$^{-2}$)')
+
+    ax[1].set_xlabel('Time [days]')
+
    
     temp_avg = np.mean(t_final)
     temp_med = np.median(t_final)
@@ -182,18 +236,18 @@ def phase_temp_conly(infile, pair):
     f.write(str(out))
     f.close()
    
-    ax[1].set_ylabel("Gas abundance (ppb)")
+   # ax[1].set_ylabel("Gas abundance (ppb)")
     ax[2].set_ylabel("Gas abundance (ppm)")
  
-    ax[0].set_title("Temperature")
-    ax[1].set_title("Ozone") 
-    ax[2].set_title("Water") 
+ #   ax[0].set_title("Temperature")
+ #   ax[1].set_title("Ozone") 
+ #   ax[2].set_title("Water") 
 
     i = 1
     while i <= 2:
         ax[i].set_xlabel("Time [days]")
   #      ax[i].set_ylabel("Gas abundance")
-        ax[i].legend()
+ #       ax[i].legend()
         i = i+1
     fig.savefig("/gscratch/vsm/mwjl/projects/binary/plots/phase_temp" + str(pair)+ ".png", bbox_inches = "tight")
 
@@ -246,7 +300,7 @@ def plot_mixingratios(infile, i, pair, coupled):
     axT.set_axisbelow(True)
     axT.set_xlim(180,320)    
     axT.plot(T2, P, color="black", label="Temperature", ls="--")
-    fig_name = "/gscratch/vsm/mwjl/projects/binary/plots/" + str(i) + str(pair) + str(coupled) + "_pap.png"
+    fig_name = "/gscratch/vsm/mwjl/projects/binary/plots/" + str(i) + str(pair) + str(coupled) + ".png"
     fig.savefig(fig_name, bbox_inches = "tight")
             
 def plot_o3(infile, pair):
@@ -363,24 +417,24 @@ def plot_ptt(inf, coupled):
 def run_plots(inf, values, coupled):
     infile = '/gscratch/vsm/mwjl/projects/binary/multiflare/io/spectra_info_'+str(inf)+'.dat'
     pair = inf[-2:]
-#    for i in values:
-#        plot_mixingratios(infile,i, pair, coupled)
-#        print(i)
-#    gif_path = "/gscratch/vsm/mwjl/projects/binary/plots/" + str(pair) + ".gif"
-#    nums = values
-#    inputs = []
-#    for i in nums: 
-#        name = "/gscratch/vsm/mwjl/projects/binary/plots/"+str(i)+str(pair)+".png"
-#        inputs.append(name)
-#    plt.figure(figsize=(4,4))
+    for i in values:
+        plot_mixingratios(infile,i, pair, coupled)
+        print(i)
+    gif_path = "/gscratch/vsm/mwjl/projects/binary/plots/" + str(pair) + ".gif"
+    nums = values
+    inputs = []
+    for i in nums: 
+        name = "/gscratch/vsm/mwjl/projects/binary/plots/"+str(i)+str(pair)+str(coupled)+".png"
+        inputs.append(name)
+    plt.figure(figsize=(4,4))
 
-#    with imageio.get_writer(gif_path, mode='I') as writer:
-#        for i in range(len(inputs)):
-#            writer.append_data(imageio.imread(inputs[i].format(i=i)))
+    with imageio.get_writer(gif_path, mode='I') as writer:
+        for i in range(len(inputs)):
+            writer.append_data(imageio.imread(inputs[i].format(i=i)))
             
     if coupled: 
         phase_temp(infile, pair)
-#        plot_o3(infile, pair)
+        plot_o3(infile, pair)
     else: 
         phase_temp_conly(infile, pair)
         plot_o3(infile, pair)
@@ -406,13 +460,17 @@ if __name__ == '__main__':
     elif platform.node().startswith("n"):
         # On a mox compute node: ready to run
         v1 = range(1, 99000,100)
-#        phase_temp('/gscratch/vsm/mwjl/projects/binary/multiflare/io/spectra_info_42221GG.dat', 'GG')
-        values = range(1, 9000,100)
+#        phase_temp('/gscratch/vsm/mwjl/projects/binary/multiflare/io/spectra_info_5512GG.dat', 'GG')
+     #   phase_temp_conly('/gscratch/vsm/mwjl/projects/binary/multiflare/io/spectra_info_5110GG.dat', 'GG')
+
+        values = range(1, 4500,10)
 #        run_plots("42221GG", v1, True)
-        out_list = ["43017GG", True], ["5110GG", False], ["518GM", True], ["5110GM", False]
-        for a,b in out_list: 
-            run_plots(a, values, b)
-#        run_plots("42320GM", v1, True)
+#        out_list = ("43017GG", True), ("5110GG", False), ("518GM", True), ("5110GM", False)
+#        gm_list = ("518GM", True), ("5110GM", False)
+#        coupled_list = ("43017GG", True), ("5110GG", False)
+#        for a,b in coupled_list: 
+#            run_plots(a, values, b)
+        run_plots("51120GK", values, True)
       #  plot_ptt("42019GG", False)
 #        plot_mixingratios('/gscratch/vsm/mwjl/projects/binary/multiflare/io/spectra_info_41412GG.dat', 5000, 'GG', False)
 #        plot_mixingratios('/gscratch/vsm/mwjl/projects/binary/multiflare/io/spectra_info_4114GG.dat', 5000, 'GG', True)
