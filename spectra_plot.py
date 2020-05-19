@@ -9,6 +9,7 @@ import csv
 import matplotlib.pyplot as plt
 import smart 
 import imageio
+import numpy as np
 
 def spectra_plot(): 
     data = []
@@ -25,6 +26,9 @@ def spectra_plot():
         print(v)
         out = float(v)
         f_wn.append(out)
+    g_star_path = '/gscratch/vsm/mwjl/projects/binary/multiflare/data/g2v_photo.pdat'
+    g_star = np.genfromtxt(g_star_path)
+    g_flux = g_star[1]
     i = 0
     data = data[2:]
     for row in data: 
@@ -34,9 +38,13 @@ def spectra_plot():
             f_num = float(num)
             temp.append(f_num)
         fig,ax = plt.subplots(1,1, figsize = (10,10))
-        ax.plot(f_wn, temp)
+        out = f_wn - g_flux
+        ax.plot(f_wn, out)
         i = i+1
         fig.savefig('/gscratch/vsm/mwjl/projects/binary/scripts/scratch/wn_rowG'+str(i) + '.png')
+    m_star_path = '/gscratch/vsm/mwjl/projects/binary/multiflare/data/adleo_photo.pdat'
+    m_star = np.genfromtxt(m_star_path)
+    m_flux = m_star[1]
     csv_path2 = '/gscratch/vsm/mwjl/projects/binary/twostarsGM/twostars3_out_bndflux2.csv'
     with open(csv_path2) as csvfile:
         readCSV = csv.reader(csvfile, delimiter=',')
@@ -59,9 +67,11 @@ def spectra_plot():
             f_num = float(num)
             temp.append(f_num)
         fig,ax = plt.subplots(1,1, figsize = (10,10))
-        ax.plot(f_wn, temp)
+        out = temp - m_flux
+        ax.plot(f_wn, out)
         i = i+1
         fig.savefig('/gscratch/vsm/mwjl/projects/binary/scripts/scratch/wn_rowM'+str(i) + '.png')
+
     nums = range(1,108)
     inputsM = []
     gif_pathM = '/gscratch/vsm/mwjl/projects/binary/plots/M_star.gif'
@@ -72,6 +82,7 @@ def spectra_plot():
     with imageio.get_writer(gif_pathM, mode='I') as writer:
         for i in range(len(inputsM)):
             writer.append_data(imageio.imread(inputsM[i].format(i=i)))
+
     inputsG = []
     gif_pathG = '/gscratch/vsm/mwjl/projects/binary/plots/G_star.gif'
     for i in nums: 
