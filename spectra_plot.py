@@ -39,7 +39,7 @@ def spectra_plot(pair):
         ax.plot(f_wl[:len(temp)], temp[:len(f_wl)])
         ax.set_xlim(1,5)
         i = i+1
-        fig.savefig('/gscratch/vsm/mwjl/projects/binary/scripts/scratch/wn_row1'+str(i) + '.png')
+        fig.savefig('/gscratch/vsm/mwjl/projects/binary/scripts/scratch/wn_rowP'+str(i) + '.png')
     csv_path2 = '/gscratch/vsm/mwjl/projects/binary/twostars'+str(pair)+'/twostars3_out_bndflux2.csv'
     with open(csv_path2) as csvfile2:
         readCSV = csv.reader(csvfile2, delimiter=',')
@@ -58,13 +58,13 @@ def spectra_plot(pair):
         ax.plot(f_wl[:len(temp)], temp[:len(f_wl)])
         ax.set_xlim(1,5)
         i = i+1
-        fig.savefig('/gscratch/vsm/mwjl/projects/binary/scripts/scratch/wn_row2'+str(i) + '.png')
+        fig.savefig('/gscratch/vsm/mwjl/projects/binary/scripts/scratch/wn_rowS'+str(i) + '.png')
 
     nums = range(1,20)
     inputs2 = []
-    gif_path2 = '/gscratch/vsm/mwjl/projects/binary/plots/2_star.gif'
+    gif_path2 = '/gscratch/vsm/mwjl/projects/binary/plots/Sec_star.gif'
     for i in nums: 
-        name = "/gscratch/vsm/mwjl/projects/binary/scripts/scratch/wn_row2"+str(i)+".png"
+        name = "/gscratch/vsm/mwjl/projects/binary/scripts/scratch/wn_rowS"+str(i)+".png"
         inputs2.append(name)
     plt.figure(figsize=(4,4))
     with imageio.get_writer(gif_path2, mode='I') as writer:
@@ -72,9 +72,9 @@ def spectra_plot(pair):
             writer.append_data(imageio.imread(inputs2[i].format(i=i)))
 
     inputs1 = []
-    gif_path1 = '/gscratch/vsm/mwjl/projects/binary/plots/1_star.gif'
+    gif_path1 = '/gscratch/vsm/mwjl/projects/binary/plots/Pri_star.gif'
     for i in nums: 
-        name = "/gscratch/vsm/mwjl/projects/binary/scripts/scratch/wn_row1"+str(i)+".png"
+        name = "/gscratch/vsm/mwjl/projects/binary/scripts/scratch/wn_rowP"+str(i)+".png"
         inputs1.append(name)
     plt.figure(figsize=(4,4))
     with imageio.get_writer(gif_path1, mode='I') as writer:
@@ -145,13 +145,13 @@ def spectra_plot_diff(pair):
         ax.plot(f_wn, out)
         ax.set_xlim(1,5)
         i = i+1
-        fig.savefig('/gscratch/vsm/mwjl/projects/binary/scripts/scratch/wn_row2_diff'+str(i) + '.png')
+        fig.savefig('/gscratch/vsm/mwjl/projects/binary/scripts/scratch/wn_rowS_diff'+str(i) + '.png')
 
     nums = range(1,20)
     inputs2 = []
-    gif_path2 = '/gscratch/vsm/mwjl/projects/binary/plots/2_star_diff.gif'
+    gif_path2 = '/gscratch/vsm/mwjl/projects/binary/plots/sec_star_diff.gif'
     for i in nums: 
-        name = "/gscratch/vsm/mwjl/projects/binary/scripts/scratch/wn_row1_diff"+str(i)+".png"
+        name = "/gscratch/vsm/mwjl/projects/binary/scripts/scratch/wn_rowS_diff"+str(i)+".png"
         inputs2.append(name)
     plt.figure(figsize=(4,4))
     with imageio.get_writer(gif_path2, mode='I') as writer:
@@ -159,9 +159,9 @@ def spectra_plot_diff(pair):
             writer.append_data(imageio.imread(inputs2[i].format(i=i)))
 
     inputs1 = []
-    gif_path1 = '/gscratch/vsm/mwjl/projects/binary/plots/1_star_diff.gif'
+    gif_path1 = '/gscratch/vsm/mwjl/projects/binary/plots/pri_star_diff.gif'
     for i in nums: 
-        name = "/gscratch/vsm/mwjl/projects/binary/scripts/scratch/wn_row1_diff"+str(i)+".png"
+        name = "/gscratch/vsm/mwjl/projects/binary/scripts/scratch/wn_rowP_diff"+str(i)+".png"
         inputs1.append(name)
     plt.figure(figsize=(4,4))
     with imageio.get_writer(gif_path1, mode='I') as writer:
