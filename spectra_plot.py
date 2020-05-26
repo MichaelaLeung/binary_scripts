@@ -29,8 +29,9 @@ def spectra_plot(pair):
         f_wl.append(out)
     i = 0
     data = data[2:]
-    while i < 5000: 
+    while i < 20: 
         temp = []
+        row = data[i]
         for num in row:
             f_num = float(num)
             temp.append(f_num)
@@ -47,8 +48,9 @@ def spectra_plot(pair):
             data.append(list(row))
     fig,ax = plt.subplots(1,1, figsize = (10,10))
     print(wn,f_wl)
-    while i < 5000: 
+    while i < 20: 
         temp = []
+        row = data[i]
         for num in row:
             f_num = float(num)
             temp.append(f_num)
@@ -58,7 +60,7 @@ def spectra_plot(pair):
         i = i+1
         fig.savefig('/gscratch/vsm/mwjl/projects/binary/scripts/scratch/wn_row2'+str(i) + '.png')
 
-    nums = range(1,108)
+    nums = range(1,20)
     inputs2 = []
     gif_path2 = '/gscratch/vsm/mwjl/projects/binary/plots/2_star.gif'
     for i in nums: 
@@ -81,13 +83,12 @@ def spectra_plot(pair):
             
 def spectra_plot_diff(pair): 
     data = []
-    csv_path = '/gscratch/vsm/mwjl/projects/binary/twostars'+str(pair)+'twostars3_out_bndflux1.csv'
+    csv_path = '/gscratch/vsm/mwjl/projects/binary/twostars'+str(pair)+'/twostars3_out_bndflux1.csv'
     with open(csv_path) as csvfile:
         readCSV = csv.reader(csvfile, delimiter=',')
         for row in readCSV:
             row = row[:-1]
             data.append(list(row))
-
     fig,ax = plt.subplots(1,1, figsize = (10,10))
     f_wn = []
     f_start = []
@@ -95,15 +96,14 @@ def spectra_plot_diff(pair):
     wn = list(wn)
     start = data[2]
     for v in wn[:-1]: 
-        print(v)
         out = 10000 / float(v)
         f_wn.append(out)
     for v in start[:-1]: 
         f_start.append(float(v))
     i = 0
     data = data[2:]
-    print(data)
-    while i < 1000: 
+    while i < 20: 
+        row = data[i]
         temp = []
         out = []
         for num in row:
@@ -112,6 +112,7 @@ def spectra_plot_diff(pair):
         fig,ax = plt.subplots(1,1, figsize = (10,10))
         zip_object = zip(f_start, temp) 
         for a,b in zip_object: 
+           print((a-b)/a)
            out.append(a-b)
         ax.plot(f_wn, out)
         ax.set_xlim(1,5)
@@ -130,7 +131,8 @@ def spectra_plot_diff(pair):
         f_start_m.append(float(v))
     i = 0
     data = data[2:]
-    while i < 1000: 
+    while i < 20:
+        row = data[i] 
         temp = []
         out = []
         for num in row:
@@ -145,7 +147,7 @@ def spectra_plot_diff(pair):
         i = i+1
         fig.savefig('/gscratch/vsm/mwjl/projects/binary/scripts/scratch/wn_row2_diff'+str(i) + '.png')
 
-    nums = range(1,1000)
+    nums = range(1,20)
     inputs2 = []
     gif_path2 = '/gscratch/vsm/mwjl/projects/binary/plots/2_star_diff.gif'
     for i in nums: 
