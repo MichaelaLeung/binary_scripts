@@ -6,6 +6,7 @@ Created on Tue May  5 11:22:21 2020
 @author: mwl
 """
 import csv 
+import matplotlib; matplotlib.use('agg')
 import matplotlib.pyplot as plt
 import smart 
 import imageio
@@ -17,58 +18,57 @@ def spectra_plot():
     with open(csv_path) as csvfile:
         readCSV = csv.reader(csvfile, delimiter=',')
         for row in readCSV:
+            row = row[:-1]
             data.append(list(row))
     fig,ax = plt.subplots(1,1, figsize = (10,10))
     f_wl = []
     wn = data[1]
     wn = list(wn)
     for v in wn[:-1]: 
-        print(v)
         out = 10000 / float(v)
         f_wl.append(out)
     i = 0
     data = data[2:]
-    while i < 1000: 
+    while i < 5000: 
         temp = []
-        row = row[:-1]
         for num in row:
             f_num = float(num)
             temp.append(f_num)
         fig,ax = plt.subplots(1,1, figsize = (10,10))
         ax.plot(f_wl[:len(temp)], temp[:len(f_wl)])
-        ax.set_xlim(0,5)
+        ax.set_xlim(1,5)
         i = i+1
         fig.savefig('/gscratch/vsm/mwjl/projects/binary/scripts/scratch/wn_rowG'+str(i) + '.png')
     csv_path2 = '/gscratch/vsm/mwjl/projects/binary/twostarsGM/twostars3_out_bndflux2.csv'
     with open(csv_path2) as csvfile2:
         readCSV = csv.reader(csvfile2, delimiter=',')
         for row in readCSV:
+            row = row[:-1]
             data.append(list(row))
     fig,ax = plt.subplots(1,1, figsize = (10,10))
-    f_wl = []
-    wn = data[1]
-    wn = list(wn)
-    for v in wn[:-1]: 
-        print(v)
-        out = 10000 / float(v)
-        f_wl.append(out)
-    i = 0
-    data = data[2:]
-    while i < 1000: 
+#    f_wl = []
+#    wn = data[1]
+#    wn = list(wn)
+#    for v in wn[:-1]: 
+#        out = 10000 / float(v)
+#        f_wl.append(out)
+#    i = 0
+#    data = data[2:]
+    print(wn,f_wl)
+    while i < 5000: 
         temp = []
-        row = row[:-1]
         for num in row:
             f_num = float(num)
             temp.append(f_num)
         fig,ax = plt.subplots(1,1, figsize = (10,10))
         ax.plot(f_wl[:len(temp)], temp[:len(f_wl)])
-        ax.set_xlim(0,5)
+        ax.set_xlim(1,5)
         i = i+1
         fig.savefig('/gscratch/vsm/mwjl/projects/binary/scripts/scratch/wn_rowM'+str(i) + '.png')
 
     nums = range(1,108)
     inputsM = []
-    gif_pathM = '/gscratch/vsm/mwjl/projects/binary/plots/M_star_diff.gif'
+    gif_pathM = '/gscratch/vsm/mwjl/projects/binary/plots/M_star.gif'
     for i in nums: 
         name = "/gscratch/vsm/mwjl/projects/binary/scripts/scratch/wn_rowM"+str(i)+".png"
         inputsM.append(name)
@@ -78,7 +78,7 @@ def spectra_plot():
             writer.append_data(imageio.imread(inputsM[i].format(i=i)))
 
     inputsG = []
-    gif_pathG = '/gscratch/vsm/mwjl/projects/binary/plots/G_star_diff.gif'
+    gif_pathG = '/gscratch/vsm/mwjl/projects/binary/plots/G_star.gif'
     for i in nums: 
         name = "/gscratch/vsm/mwjl/projects/binary/scripts/scratch/wn_rowG"+str(i)+".png"
         inputsG.append(name)
@@ -93,64 +93,82 @@ def spectra_plot_diff():
     with open(csv_path) as csvfile:
         readCSV = csv.reader(csvfile, delimiter=',')
         for row in readCSV:
+            row = row[:-1]
             data.append(list(row))
+
     fig,ax = plt.subplots(1,1, figsize = (10,10))
     f_wn = []
+    f_start = []
     wn = data[1]
     wn = list(wn)
+    start = data[2]
     for v in wn[:-1]: 
         print(v)
         out = 10000 / float(v)
         f_wn.append(out)
-    g_star_path = '/gscratch/vsm/mwjl/projects/binary/multiflare/data/g2v_photo.pdat'
-    g_star = np.genfromtxt(g_star_path, skip_header = 1)
-    g_flux = g_star[:,1]
+    for v in start[:-1]: 
+        f_start.append(float(v))
+#    g_star_path = '/gscratch/vsm/mwjl/projects/binary/multiflare/data/g2v_photo.pdat'
+#    g_star = np.genfromtxt(g_star_path, skip_header = 1)
+#    g_flux = g_star[:,1]
     i = 0
     data = data[2:]
+    print(data)
     while i < 1000: 
         temp = []
-        row = row[:-1]
+        out = []
         for num in row:
             f_num = float(num)
             temp.append(f_num)
         fig,ax = plt.subplots(1,1, figsize = (10,10))
-        out = temp[:len(g_flux)] - g_flux[:len(temp)]
-        ax.plot(f_wn[:len(out)], out[:len(g_flux)])
-        ax.set_xlim(0,5)
+        zip_object = zip(f_start, temp) 
+        for a,b in zip_object: 
+           out.append(a-b)
+        ax.plot(f_wn, out)
+        ax.set_xlim(1,5)
         i = i+1
         fig.savefig('/gscratch/vsm/mwjl/projects/binary/scripts/scratch/wn_rowG_diff'+str(i) + '.png')
-    m_star_path = '/gscratch/vsm/mwjl/projects/binary/multiflare/data/adleo_photo.pdat'
-    m_star = np.genfromtxt(m_star_path, skip_header = 1)
-    m_flux = m_star[:,1]
+ #   m_star_path = '/gscratch/vsm/mwjl/projects/binary/multiflare/data/adleo_photo.pdat'
+ #   m_star = np.genfromtxt(m_star_path, skip_header = 1)
+ #   m_flux = m_star[:,1]
     csv_path2 = '/gscratch/vsm/mwjl/projects/binary/twostarsGM/twostars3_out_bndflux2.csv'
     with open(csv_path2) as csvfile2:
         readCSV = csv.reader(csvfile2, delimiter=',')
         for row in readCSV:
+            row = row[:-1]
             data.append(list(row))
     fig,ax = plt.subplots(1,1, figsize = (10,10))
-    f_wn = []
-    wn = data[1]
-    wn = list(wn)
-    for v in wn[:-1]: 
-        print(v)
-        out = 10000 / float(v)
-        f_wn.append(out)
+    f_start_m = []
+ #   f_wn = []
+ #   wn = data[1]
+    start_m = data[2]
+ #   wn = list(wn)
+ #   for v in wn[:-1]: 
+ #       print(v)
+ #       out = 10000 / float(v)
+ #       f_wn.append(out)
+    for v in start[:-1]:
+        f_start_m.append(float(v))
     i = 0
     data = data[2:]
     while i < 1000: 
         temp = []
-        row = row[:-1]
+#        row = row[:-1]
+        out = []
         for num in row:
             f_num = float(num)
             temp.append(f_num)
+        zip_object = zip(f_start_m, temp) 
+        for a,b	in zip_object: 
+           out.append(a-b)
         fig,ax = plt.subplots(1,1, figsize = (10,10))
-        out = temp[:len(m_flux)] - m_flux[:len(temp)]
-        ax.plot(f_wn[:len(out)], out[:len(f_wn)])
-        ax.set_xlim(0,5)
+   #     out =np.asarray(temp) - np.asarray(start)
+        ax.plot(f_wn, out)
+        ax.set_xlim(1,5)
         i = i+1
         fig.savefig('/gscratch/vsm/mwjl/projects/binary/scripts/scratch/wn_rowM_diff'+str(i) + '.png')
 
-    nums = range(1,108)
+    nums = range(1,1000)
     inputsM = []
     gif_pathM = '/gscratch/vsm/mwjl/projects/binary/plots/M_star_diff.gif'
     for i in nums: 
@@ -192,5 +210,5 @@ if __name__ == '__main__':
                                rm_after_submit = True)
     elif platform.node().startswith("n"):
         # On a mox compute node: ready to run
-        spectra_plot()
+#        spectra_plot()
         spectra_plot_diff()
