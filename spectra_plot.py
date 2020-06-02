@@ -39,48 +39,60 @@ def chooser(pair):
     with open(weights_path) as weightsfile:
         readWeights = csv.reader(weightsfile, delimiter=',')
         for row in readWeights:
-            weights.append(list(row))
-            
-    pri_spec = np.genfromtxt(pri_star)
-    pri_spec_uv = np.genfromtxt(pri_star_uv)
+            weights.append(list(row[:-1]))
+    weights = weights[1:]
+    weights = np.asarray(weights, dtype = 'float64')
+    print(np.shape(weights))            
+    pri_spec = np.genfromtxt(pri_star, skip_header = 1, delimiter = (5,14,9,8))
+    pri_spec_uv = np.genfromtxt(pri_star_uv, skip_header = 2, max_rows = 10, delimiter = (6,10))
+    print(np.shape(pri_spec_uv))
     pri_wl = pri_spec[:,2]
     pri_spec = pri_spec[:,1]
+    pri_wl_uv = pri_spec_uv[:,0]
     pri_spec_uv = pri_spec_uv[:,1]
-    pri_wl_uv = pri_spec[:,2]
     
-    sec_spec = np.genfromtxt(sec_star)
-    sec_spec_uv = np.genfromtxt(sec_star_uv)
+    sec_spec = np.genfromtxt(sec_star, skip_header = 1, delimiter = (5,14,9,8))
+    sec_spec_uv = np.genfromtxt(sec_star_uv, skip_header = 2, max_rows = 10, delimiter = (6,10))
+    print(sec_spec_uv)
     sec_wl = sec_spec[:,2]
     sec_spec = sec_spec[:,1]
+    sec_wl_uv = sec_spec_uv[:,0]
     sec_spec_uv = sec_spec_uv[:,1]
-    sec_wl_uv = sec_spec[:,2]
     
-    pri_out = pri_spec_uv.append(pri_spec)
-    sec_out = sec_spec_uv.append(sec_spec)
+    pri_weights = weights[:,1]
+    sec_weights = weights[:,2]
+    pri_weights = np.transpose(pri_weights)
+    sec_weights = np.transpose(sec_weights) 
+
+    pri_spec = np.outer(pri_weights, pri_spec)
+    sec_spec = np.outer(sec_weights, sec_spec)
+    pri_spec_uv = np.outer(pri_weights, pri_spec_uv)
+    sec_spec_uv = np.outer(sec_weights, sec_spec_uv)
     
-    pri_out = pri_out * weights[0]
-    sec_out = sec_out * weights[1]
-    
-    pri_wl = pri_wl_uv.append(pri_wl)
-    sec_wl = sec_wl_uv.append(sec_wl)
-    
-    return(pri_out, sec_out, pri_wl, sec_wl)
+    return(pri_wl, pri_spec, pri_wl_uv, pri_spec_uv, sec_wl, sec_spec, sec_wl_uv, sec_spec_uv)
         
 
 def spectra_plot(pair): 
-    pri_spec, sec_spec, pri_wl, sec_wl = chooser(pair)
+    pri_wl, pri_spec, pri_wl_uv, pri_spec_uv, sec_wl, sec_spec, sec_wl_uv, sec_spec_uv = chooser(pair)
     fig,ax = plt.subplots(1,1, figsize = (10,10))
     i = 0
     while i < 1000:
         print(i, 'pri') 
         temp = []
+        temp_uv = []
         row = pri_spec[i]
         for num in row:
             f_num = float(num)
             temp.append(f_num)
+        row_uv = pri_spec_uv[i]
+        for num in row_uv: 
+            print(num)
+            f_num_uv = float(num)
+            temp_uv.append(f_num_uv)
         fig,ax = plt.subplots(1,1, figsize = (10,10))
         ax.plot(pri_wl[:len(temp)], temp[:len(pri_wl)])
-        ax.set_xlim(1,5)
+        ax.plot(pri_wl_uv, temp_uv)
+#        ax.set_xlim(1,5)
         ax.set_ylim(0, 5 * 10 **11)
         fig.savefig('/gscratch/vsm/mwjl/projects/binary/scripts/scratch/wn_rowP'+str(i) + '.png')
         i = i + 10
@@ -96,7 +108,7 @@ def spectra_plot(pair):
             temp.append(f_num)
         fig,ax = plt.subplots(1,1, figsize = (10,10))
         ax.plot(sec_wl[:len(temp)], temp[:len(sec_wl)])
-        ax.set_xlim(1,5)
+ #       ax.set_xlim(1,5)
         ax.set_ylim(0, 5 * 10**10)
         fig.savefig('/gscratch/vsm/mwjl/projects/binary/scripts/scratch/wn_rowS'+str(j) + '.png')
         j  =j + 10
@@ -125,7 +137,7 @@ def spectra_plot(pair):
             writer.append_data(imageio.imread(inputs1[m].format(i=i)))
             
 def spectra_plot_diff(pair): 
-    pri_spec, sec_spec, pri_wl, sec_wl = chooser(pair)
+    pri_wl, pri_spec, pri_wl_uv, pri_spec_uv, sec_wl, sec_spec, sec_wl_uv, sec_spec_uv = chooser(pair)
     
     fig,ax = plt.subplots(1,1, figsize = (10,10))
     i = 0 
@@ -143,7 +155,7 @@ def spectra_plot_diff(pair):
            print((a-b))
            out.append(a/b)
         ax.plot(pri_wl, out)
-        ax.set_xlim(1,5)
+  #      ax.set_xlim(1,5)
         fig.savefig('/gscratch/vsm/mwjl/projects/binary/scripts/scratch/wn_rowP_diff'+str(i) + '.png')
         i = i + 10 
 
@@ -163,7 +175,7 @@ def spectra_plot_diff(pair):
            out.append(a/b)
         fig,ax = plt.subplots(1,1, figsize = (10,10))
         ax.plot(sec_wl, out)
-        ax.set_xlim(1,5)
+ #       ax.set_xlim(1,5)
         fig.savefig('/gscratch/vsm/mwjl/projects/binary/scripts/scratch/wn_rowS_diff'+str(i) + '.png')
         i = i + 10
     nums = range(0,1000,10)
