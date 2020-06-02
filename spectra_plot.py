@@ -101,15 +101,22 @@ def spectra_plot(pair):
     fig,ax = plt.subplots(1,1, figsize = (10,10))
     while j < 1000: 
         temp = []
+        temp_uv = []
         print(j, 'sec')
         row = sec_spec[j]
         for num in row:
             f_num = float(num)
             temp.append(f_num)
+        row_uv = sec_spec_uv[i]
+        for num in row_uv: 
+            print(num)
+            f_num_uv = float(num)
+            temp_uv.append(f_num_uv)
         fig,ax = plt.subplots(1,1, figsize = (10,10))
         ax.plot(sec_wl[:len(temp)], temp[:len(sec_wl)])
+        ax.plot(sec_wl, temp_uv)
  #       ax.set_xlim(1,5)
-        ax.set_ylim(0, 5 * 10**10)
+        ax.set_ylim(0, 5 * 10**11)
         fig.savefig('/gscratch/vsm/mwjl/projects/binary/scripts/scratch/wn_rowS'+str(j) + '.png')
         j  =j + 10
 
@@ -142,26 +149,40 @@ def spectra_plot_diff(pair):
     fig,ax = plt.subplots(1,1, figsize = (10,10))
     i = 0 
     start = pri_spec[0]
+    start_uv = pri_spec_uv[0]
     while i < 1000: 
         row = pri_spec[i]
+        row_uv = pri_spec_uv[i]
         temp = []
+        temp_uv = []
         out = []
+        out_uv = []
         for num in row:
             f_num = float(num)
             temp.append(f_num)
+        for num in row_uv:
+            f_num = float(num)
+            temp_uv.append(f_num)
         fig,ax = plt.subplots(1,1, figsize = (10,10))
         zip_object = zip(start, temp) 
         for a,b in zip_object: 
            print((a-b))
            out.append(a/b)
+        zip_object_uv = zip(start_uv, temp_uv) 
+        for a,b in zip_object_uv: 
+           print((a-b))
+           out_uv.append(a/b)
         ax.plot(pri_wl, out)
+        ax.plot(pri_wl_uv, out_uv)
   #      ax.set_xlim(1,5)
+        ax.set_ylim(0.8,1.2)
         fig.savefig('/gscratch/vsm/mwjl/projects/binary/scripts/scratch/wn_rowP_diff'+str(i) + '.png')
         i = i + 10 
 
     data = []
     i = 0
     start_sec = sec_spec[0]
+    start_sec_uv = sec_spec_uv[0]
     fig,ax = plt.subplots(1,1, figsize = (10,10))
     while i < 1000:
         row = sec_spec[i] 
@@ -170,12 +191,23 @@ def spectra_plot_diff(pair):
         for num in row:
             f_num = float(num)
             temp.append(f_num)
+        for num in row_uv:
+            f_num = float(num)
+            temp_uv.append(f_num)
+        fig,ax = plt.subplots(1,1, figsize = (10,10))
         zip_object = zip(start_sec, temp) 
-        for a,b	in zip_object: 
+        for a,b in zip_object: 
+           print((a-b))
            out.append(a/b)
+        zip_object_uv = zip(start_sec_uv, temp_uv) 
+        for a,b in zip_object_uv: 
+           print((a-b))
+           out_uv.append(a/b)
         fig,ax = plt.subplots(1,1, figsize = (10,10))
         ax.plot(sec_wl, out)
+        ax.plot(sec_wl_uv, out_uv)
  #       ax.set_xlim(1,5)
+        ax.set_ylim(0.8,1.2)
         fig.savefig('/gscratch/vsm/mwjl/projects/binary/scripts/scratch/wn_rowS_diff'+str(i) + '.png')
         i = i + 10
     nums = range(0,1000,10)
