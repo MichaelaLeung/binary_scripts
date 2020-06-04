@@ -83,8 +83,14 @@ def chooser(pair):
         
 
 def spectra_plot(pair): 
+    g_max = 5*10**11
+    m_max = 2*10**12
     pri_wl, pri_spec, pri_wl_uv, pri_spec_uv, sec_wl, sec_spec, sec_wl_uv, sec_spec_uv,pair = chooser(pair)
  #   print('pri_spec',pri_spec_uv, 'sec spec',sec_spec_uv)
+    fig,ax = plt.subplots(1,1,figsize = (10,10))
+    ax.plot(pri_wl_uv, pri_spec_uv)
+    ax.plot(sec_wl_uv, pri_spec_uv)
+    fig.savefig('/gscratch/vsm/mwjl/projects/binary/plots/spec'+ str(pair)+'.png')
     fig,ax = plt.subplots(1,1, figsize = (10,10))
     i = 0
     while i < 1000:
@@ -127,7 +133,11 @@ def spectra_plot(pair):
         ax.plot(sec_wl[:len(temp)], temp[:len(sec_wl)])
         ax.plot(sec_wl_uv, temp_uv)
         ax.set_xlim(0.1,5)
-        ax.set_ylim(0, 5 * 10**11)
+        if pair == 'MK':
+            ymax = m_max
+        else:
+            ymax = g_max
+        ax.set_ylim(0, ymax)
         fig.savefig('/gscratch/vsm/mwjl/projects/binary/scripts/scratch/wn_rowS'+str(j) + str(pair)+'.png')
         j  =j + 10
 
