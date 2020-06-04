@@ -87,13 +87,6 @@ def spectra_plot(pair):
     m_max = 2*10**12
     pri_wl, pri_spec, pri_wl_uv, pri_spec_uv, sec_wl, sec_spec, sec_wl_uv, sec_spec_uv,pair = chooser(pair)
  #   print('pri_spec',pri_spec_uv, 'sec spec',sec_spec_uv)
-    fig,ax = plt.subplots(1,1,figsize = (10,10))
-    ax.plot(pri_wl_uv, pri_spec_uv[1], label = 'primary star spectrum')
-    ax.plot(sec_wl_uv, sec_spec_uv[1], label = 'secondary star spectrum')
-    ax.ticklabel_format(axis = 'both', style = 'sci', scilimit = (0,0))
-    ax.legend()
-    fig.savefig('/gscratch/vsm/mwjl/projects/binary/plots/spec'+ str(pair)+'.png')
-    fig,ax = plt.subplots(1,1, figsize = (10,10))
     i = 0
     while i < 1000:
   #      print(i, 'pri') 
@@ -108,16 +101,22 @@ def spectra_plot(pair):
 #            print(num)
             f_num_uv = float(num)
             temp_uv.append(f_num_uv)
-        fig,ax = plt.subplots(1,1, figsize = (10,10))
-        ax.plot(pri_wl[:len(temp)], temp[:len(pri_wl)])
-        ax.plot(pri_wl_uv, temp_uv)
-        ax.set_xlim(0.1,5)
-        ax.set_ylim(0, 2 * 10 **12)
+        fig,ax = plt.subplots(2,1, figsize = (20,10))
+        if pair == 'MK':
+            ymax = m_max
+        else:
+            ymax = g_max
+        ax[1].plot(pri_wl[:len(temp)], temp[:len(pri_wl)])
+        ax[0].plot(pri_wl_uv, temp_uv)
+        ax[1].set_xlim(1,5)
+        ax[0].set_xlim(0.1, 0.2)
+        ax[1].set_ylim(0, ymax)
+        ax[0].set_ylim(0,ymax/100)
         fig.savefig('/gscratch/vsm/mwjl/projects/binary/scripts/scratch/wn_rowP'+str(i) + str(pair)+'.png')
         i = i + 10
 
     j = 0
-    fig,ax = plt.subplots(1,1, figsize = (10,10))
+    fig,ax = plt.subplots(2,1, figsize = (20,10))
     while j < 1000: 
         temp = []
         temp_uv = []
@@ -131,15 +130,13 @@ def spectra_plot(pair):
  #           print(num)
             f_num_uv = float(num)
             temp_uv.append(f_num_uv)
-        fig,ax = plt.subplots(1,1, figsize = (10,10))
-        ax.plot(sec_wl[:len(temp)], temp[:len(sec_wl)])
-        ax.plot(sec_wl_uv, temp_uv)
-        ax.set_xlim(0.1,5)
-        if pair == 'MK':
-            ymax = m_max
-        else:
-            ymax = g_max
-        ax.set_ylim(0, ymax)
+        fig,ax = plt.subplots(2,1, figsize = (20,10))
+        ax[1].plot(sec_wl[:len(temp)], temp[:len(sec_wl)])
+        ax[0].plot(sec_wl_uv, temp_uv)
+        ax[1].set_xlim(1,5)
+        ax[0].set_xlim(0.1, 0.2)
+        ax[1].set_ylim(0, ymax)
+        ax[0].set_ylim(0,ymax/100)
         fig.savefig('/gscratch/vsm/mwjl/projects/binary/scripts/scratch/wn_rowS'+str(j) + str(pair)+'.png')
         j  =j + 10
 
