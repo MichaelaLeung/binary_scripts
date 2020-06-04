@@ -88,8 +88,10 @@ def spectra_plot(pair):
     pri_wl, pri_spec, pri_wl_uv, pri_spec_uv, sec_wl, sec_spec, sec_wl_uv, sec_spec_uv,pair = chooser(pair)
  #   print('pri_spec',pri_spec_uv, 'sec spec',sec_spec_uv)
     fig,ax = plt.subplots(1,1,figsize = (10,10))
-    ax.plot(pri_wl_uv, pri_spec_uv)
-    ax.plot(sec_wl_uv, pri_spec_uv)
+    ax.plot(pri_wl_uv, pri_spec_uv[1], label = 'primary star spectrum')
+    ax.plot(sec_wl_uv, sec_spec_uv[1], label = 'secondary star spectrum')
+    ax.ticklabel_format(axis = 'both', style = 'sci', scilimit = (0,0))
+    ax.legend()
     fig.savefig('/gscratch/vsm/mwjl/projects/binary/plots/spec'+ str(pair)+'.png')
     fig,ax = plt.subplots(1,1, figsize = (10,10))
     i = 0
@@ -198,7 +200,7 @@ def spectra_plot_diff(pair):
         ax.plot(pri_wl_uv, out_uv)
         ax.set_xlim(0.1,5)
         ax.set_ylim(0.8,1.2)
-        fig.savefig('/gscratch/vsm/mwjl/projects/binary/scripts/scratch/wn_rowP_diff'+str(i) + '.png')
+        fig.savefig('/gscratch/vsm/mwjl/projects/binary/scripts/scratch/wn_rowP_diff'+str(i) + str(pair)+'.png')
         i = i + 10 
 
     data = []
@@ -279,5 +281,8 @@ if __name__ == '__main__':
     elif platform.node().startswith("n"):
         # On a mox compute node: ready to run
         spectra_plot('GM')
-        spectra_plot_diff('GM')
+        spectra_plot('GK')
+        spectra_plot('GM')
+        spectra_plot('MK')
+#        spectra_plot_diff('GM')
       #  chooser('GM')
