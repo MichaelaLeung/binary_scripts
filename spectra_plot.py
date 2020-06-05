@@ -77,7 +77,6 @@ def chooser(pair):
     sec_wl = 10000/ sec_wl    
     pri_wl_uv = pri_wl_uv /10000 
     sec_wl_uv = sec_wl_uv/10000
-  #  print(pri_wl, pri_spec, pri_wl_uv, pri_spec_uv, sec_wl, sec_spec, sec_wl_uv, sec_spec_uv)
     print(sec_spec_uv)
     return(pri_wl, pri_spec, pri_wl_uv, pri_spec_uv, sec_wl, sec_spec, sec_wl_uv, sec_spec_uv, pair)
         
@@ -86,10 +85,8 @@ def spectra_plot(pair):
     g_max = 5*10**11
     m_max = 2*10**12
     pri_wl, pri_spec, pri_wl_uv, pri_spec_uv, sec_wl, sec_spec, sec_wl_uv, sec_spec_uv,pair = chooser(pair)
- #   print('pri_spec',pri_spec_uv, 'sec spec',sec_spec_uv)
     i = 0
     while i < 1000:
-  #      print(i, 'pri') 
         temp = []
         temp_uv = []
         row = pri_spec[i]
@@ -98,70 +95,50 @@ def spectra_plot(pair):
             temp.append(f_num)
         row_uv = pri_spec_uv[i]
         for num in row_uv: 
-#            print(num)
             f_num_uv = float(num)
             temp_uv.append(f_num_uv)
-        fig,ax = plt.subplots(2,1, figsize = (20,10))
+        fig,ax = plt.subplots(2,2, figsize = (20,20))
         if pair == 'MK':
             ymax = m_max
         else:
             ymax = g_max
+        temp_sec = []
+        temp_sec_uv = []
+        row_sec = sec_spec[i]
+        for num in row_sec:
+            f_num = float(num)
+            temp_sec.append(f_num)
+        row_sec_uv = sec_spec_uv[i]
+        for num in row_sec_uv: 
+            f_num_uv = float(num)
+            temp_sec_uv.append(f_num_uv)
+        fig,ax = plt.subplots(1,2, figsize = (20,10))
+        ax[4].plot(sec_wl[:len(temp)], temp[:len(sec_wl)])
+        ax[3].plot(sec_wl_uv, temp_uv)
+        ax[4].set_xlim(1,5)
+        ax[3].set_xlim(0.1, 0.2)
+        ax[4].set_ylim(0, ymax)
+        ax[3].set_ylim(0,ymax/1000)
+        
         ax[1].plot(pri_wl[:len(temp)], temp[:len(pri_wl)])
         ax[0].plot(pri_wl_uv, temp_uv)
         ax[1].set_xlim(1,5)
         ax[0].set_xlim(0.1, 0.2)
         ax[1].set_ylim(0, ymax)
-        ax[0].set_ylim(0,ymax/100)
-        fig.savefig('/gscratch/vsm/mwjl/projects/binary/scripts/scratch/wn_rowP'+str(i) + str(pair)+'.png')
+        ax[0].set_ylim(0,ymax/1000)
+        fig.savefig('/gscratch/vsm/mwjl/projects/binary/scripts/scratch/wn_row'+str(i) + str(pair)+'.png')
         i = i + 10
-
-    j = 0
-    fig,ax = plt.subplots(1,2, figsize = (20,10))
-    while j < 1000: 
-        temp = []
-        temp_uv = []
-   #     print(j, 'sec')
-        row = sec_spec[j]
-        for num in row:
-            f_num = float(num)
-            temp.append(f_num)
-        row_uv = sec_spec_uv[i]
-        for num in row_uv: 
- #           print(num)
-            f_num_uv = float(num)
-            temp_uv.append(f_num_uv)
-        fig,ax = plt.subplots(1,2, figsize = (20,10))
-        ax[1].plot(sec_wl[:len(temp)], temp[:len(sec_wl)])
-        ax[0].plot(sec_wl_uv, temp_uv)
-        ax[1].set_xlim(1,5)
-        ax[0].set_xlim(0.1, 0.2)
-        ax[1].set_ylim(0, ymax)
-        ax[0].set_ylim(0,ymax/100)
-        fig.savefig('/gscratch/vsm/mwjl/projects/binary/scripts/scratch/wn_rowS'+str(j) + str(pair)+'.png')
-        j  =j + 10
-
     nums = range(0,1000,10)
     inputs2 = []
-    gif_path2 = '/gscratch/vsm/mwjl/projects/binary/plots/Sec_star'+str(pair)+'.gif'
+    gif_path2 = '/gscratch/vsm/mwjl/projects/binary/plots/spectra_'+str(pair)+'.gif'
     for i in nums: 
-        name = "/gscratch/vsm/mwjl/projects/binary/scripts/scratch/wn_rowS"+str(i)+str(pair)+".png"
-
+        name = "/gscratch/vsm/mwjl/projects/binary/scripts/scratch/wn_row"+str(i)+str(pair)+".png"
         inputs2.append(name)
     plt.figure(figsize=(4,4))
-    print(inputs2)
     with imageio.get_writer(gif_path2, mode='I') as writer:
         for k in range(len(inputs2)):
             writer.append_data(imageio.imread(inputs2[k].format(i=k)))
 
-    inputs1 = []
-    gif_path1 = '/gscratch/vsm/mwjl/projects/binary/plots/Pri_star'+str(pair)+'.gif'
-    for m in nums: 
-        name = "/gscratch/vsm/mwjl/projects/binary/scripts/scratch/wn_rowP"+str(m)+str(pair)+".png"
-        inputs1.append(name)
-    plt.figure(figsize=(4,4))
-    with imageio.get_writer(gif_path1, mode='I') as writer:
-        for m in range(len(inputs1)):
-            writer.append_data(imageio.imread(inputs1[m].format(i=i)))
             
 def spectra_plot_diff(pair): 
     pri_wl, pri_spec, pri_wl_uv, pri_spec_uv, sec_wl, sec_spec, sec_wl_uv, sec_spec_uv, pair  = chooser(pair)
@@ -279,7 +256,7 @@ if __name__ == '__main__':
         # On a mox compute node: ready to run
         spectra_plot('GM')
         spectra_plot('GK')
-        spectra_plot('GM')
+        spectra_plot('GG')
         spectra_plot('MK')
 #        spectra_plot_diff('GM')
       #  chooser('GM')
