@@ -234,7 +234,18 @@ def spectra_plot_diff(pair):
     with imageio.get_writer(gif_path1, mode='I') as writer:
         for i in range(len(inputs1)):
             writer.append_data(imageio.imread(inputs1[i].format(i=i)))
-        
+            
+def light_curve(pair):
+    pri_wl, pri_spec, pri_wl_uv, pri_spec_uv, sec_wl, sec_spec, sec_wl_uv, sec_spec_uv,pair = chooser(pair)
+    total_flux = pri_spec + sec_spec 
+    total_flux_uv = pri_spec_uv + sec_spec_uv 
+    i = 5 
+    flux_out = total_flux[:,i]
+    flux_out_uv = total_flux_uv[:,i]
+    fig,ax = plt.subplots(2,1, fig_size = (10,10))
+    ax[0].plot(range(len(flux_out)),flux_out)
+    ax[1].plot(range(len(flux_out_uv)), flux_out_uv)   
+    fig.savefig('/gscratch/vsm/mwjl/projects/binary/lightcurve_'+ str(pair)+'.png')     
     
 if __name__ == '__main__':
 
