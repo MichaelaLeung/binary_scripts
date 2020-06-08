@@ -100,8 +100,10 @@ def spectra_plot(pair):
         fig,ax = plt.subplots(2,2, figsize = (20,20))
         if pair == 'MK':
             ymax = m_max
+            uv_max = 10 ** 8
         else:
             ymax = g_max
+            uv_max = 10 **6
         temp_sec = []
         temp_sec_uv = []
         row_sec = sec_spec[i]
@@ -112,20 +114,20 @@ def spectra_plot(pair):
         for num in row_sec_uv: 
             f_num_uv = float(num)
             temp_sec_uv.append(f_num_uv)
-        fig,ax = plt.subplots(1,2, figsize = (20,10))
-        ax[4].plot(sec_wl[:len(temp)], temp[:len(sec_wl)])
-        ax[3].plot(sec_wl_uv, temp_uv)
-        ax[4].set_xlim(1,5)
-        ax[3].set_xlim(0.1, 0.2)
-        ax[4].set_ylim(0, ymax)
-        ax[3].set_ylim(0,ymax/1000)
+
+        ax[1,1].plot(sec_wl[:len(temp)], temp_sec[:len(sec_wl)])
+        ax[1,0].plot(sec_wl_uv, temp_sec_uv)
+        ax[1,1].set_xlim(1,5)
+        ax[1,0].set_xlim(0.1, 0.2)
+        ax[1,1].set_ylim(0, ymax)
+        ax[1,0].set_ylim(0,uv_max)
         
-        ax[1].plot(pri_wl[:len(temp)], temp[:len(pri_wl)])
-        ax[0].plot(pri_wl_uv, temp_uv)
-        ax[1].set_xlim(1,5)
-        ax[0].set_xlim(0.1, 0.2)
-        ax[1].set_ylim(0, ymax)
-        ax[0].set_ylim(0,ymax/1000)
+        ax[0,1].plot(pri_wl[:len(temp)], temp[:len(pri_wl)])
+        ax[0,0].plot(pri_wl_uv, temp_uv)
+        ax[0,1].set_xlim(1,5)
+        ax[0,0].set_xlim(0.1, 0.2)
+        ax[0,1].set_ylim(0, ymax)
+        ax[0,0].set_ylim(0,uv_max)
         fig.savefig('/gscratch/vsm/mwjl/projects/binary/scripts/scratch/wn_row'+str(i) + str(pair)+'.png')
         i = i + 10
     nums = range(0,1000,10)
